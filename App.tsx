@@ -434,8 +434,8 @@ export default function App() {
                 <div className="absolute top-0 right-0 w-64 h-64 bg-accent-600/10 rounded-full blur-[80px] -mr-16 -mt-16 pointer-events-none group-hover:bg-accent-600/20 transition-colors duration-500"></div>
                 <div className="absolute bottom-0 left-0 w-64 h-64 bg-purple-600/10 rounded-full blur-[80px] -ml-16 -mb-16 pointer-events-none group-hover:bg-purple-600/20 transition-colors duration-500"></div>
                 
-                <h2 className="text-3xl md:text-5xl font-bold text-white mb-6 relative z-10">
-                  Faça um orçamento agora
+                <h2 className="text-3xl md:text-5xl font-bold text-white mb-6 relative z-10 leading-tight">
+                  Quer um vídeo para divulgar <br/><span className="text-accent-500">sua empresa ou produto?</span>
                 </h2>
                 <p className="text-lg text-neutral-400 mb-10 max-w-2xl mx-auto relative z-10 leading-relaxed">
                   Cada projeto tem uma necessidade única. Entre em contato direto comigo para receber uma proposta alinhada ao seu objetivo, sem burocracia.
