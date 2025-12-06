@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { 
   Video, Zap, CheckCircle2, Clock, BarChart3, Film, PenTool, 
   MessageSquare, ChevronDown, ChevronUp, BrainCircuit, 
-  LayoutTemplate, MessageCircle, Menu, X, Instagram, Youtube, PlayCircle, ArrowRight, ExternalLink
+  LayoutTemplate, MessageCircle, Menu, X, Instagram, Youtube, PlayCircle, ArrowRight, ExternalLink, Home
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { youtubeVideos, instagramPosts, socialLinks } from './portfolio';
@@ -28,7 +28,7 @@ const FadeIn: React.FC<{ children: React.ReactNode; delay?: number; className?: 
   </motion.div>
 );
 
-const Button = ({ children, variant = 'primary', href, className = '', ...props }: any) => {
+const Button = ({ children, variant = 'primary', href, onClick, className = '', ...props }: any) => {
   const baseStyles = "inline-flex items-center justify-center px-8 py-3 text-base font-bold transition-all duration-200 uppercase tracking-wide rounded-sm cursor-pointer relative overflow-hidden group";
   const variants = {
     primary: "bg-accent-600 text-white shadow-lg shadow-accent-900/20 hover:shadow-accent-500/50 hover:-translate-y-1",
@@ -50,7 +50,7 @@ const Button = ({ children, variant = 'primary', href, className = '', ...props 
   if (href) {
     return <motion.a whileTap={{ scale: 0.95 }} href={href} target="_blank" rel="noopener noreferrer" className={combinedClasses} {...props}>{content}</motion.a>;
   }
-  return <motion.button whileTap={{ scale: 0.95 }} className={combinedClasses} {...props}>{content}</motion.button>;
+  return <motion.button whileTap={{ scale: 0.95 }} onClick={onClick} className={combinedClasses} {...props}>{content}</motion.button>;
 };
 
 // Componente Card YouTube
@@ -151,39 +151,70 @@ const faqs = [
 // --- APP COMPONENT ---
 
 export default function App() {
+  const [currentPage, setCurrentPage] = useState('inicio');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   const toggleFaq = (idx: number) => setOpenFaq(openFaq === idx ? null : idx);
-  const closeMenu = () => setIsMobileMenuOpen(false);
+  
+  const navigateTo = (page: string) => {
+    setCurrentPage(page);
+    setIsMobileMenuOpen(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const navItems = [
+    { id: 'inicio', label: 'Início', icon: Home },
+    { id: 'sobre', label: 'Sobre' },
+    { id: 'servicos', label: 'Serviços' },
+    { id: 'portfolio', label: 'Portfólio' },
+    { id: 'contato', label: 'Contato' }
+  ];
 
   return (
-    <div className="min-h-screen bg-neutral-950 text-neutral-100 font-sans selection:bg-accent-500 selection:text-white overflow-x-hidden">
+    <div className="min-h-screen bg-neutral-950 text-neutral-100 font-sans selection:bg-accent-500 selection:text-white overflow-x-hidden flex flex-col">
       
-      {/* HEADER */}
-      <header className="fixed top-0 w-full z-50 bg-neutral-950/80 backdrop-blur-md border-b border-neutral-800">
-        <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+      {/* HEADER FIXO */}
+      <header className="fixed top-0 w-full z-50 bg-neutral-950/80 backdrop-blur-md border-b border-neutral-800 shadow-xl">
+        <div className="max-w-6xl mx-auto px-4 h-20 flex items-center justify-between">
           <motion.div 
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="font-bold text-xl tracking-tighter text-white z-50"
+            className="font-bold text-2xl tracking-tighter text-white z-50 cursor-pointer"
+            onClick={() => navigateTo('inicio')}
           >
             ALEX<span className="text-accent-500">SOUZA</span>
           </motion.div>
 
-          <nav className="hidden md:flex gap-8 text-sm font-medium text-neutral-400">
-            {['Sobre', 'Serviços', 'Portfólio', 'Contato'].map((item, i) => (
-              <motion.a 
-                key={item} 
+          <nav className="hidden md:flex gap-1 items-center">
+            {navItems.map((item, i) => (
+              <motion.button 
+                key={item.id} 
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.1 }}
-                href={`#${item.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")}`} 
-                className="hover:text-white transition-colors relative group"
+                onClick={() => navigateTo(item.id)}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 relative flex items-center gap-2 ${
+                  currentPage === item.id 
+                    ? 'text-white' 
+                    : 'text-neutral-400 hover:text-white hover:bg-neutral-800'
+                }`}
               >
-                {item}
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-accent-500 transition-all duration-300 group-hover:w-full"></span>
-              </motion.a>
+                {/* Indicador de ativo */}
+                {currentPage === item.id && (
+                   <motion.div 
+                     layoutId="navbar-indicator"
+                     className="absolute inset-0 bg-neutral-800 rounded-full border border-neutral-700"
+                     transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                   />
+                )}
+                
+                {/* Conteúdo do botão */}
+                <span className="relative z-10 flex items-center gap-2">
+                  {item.icon && <item.icon className="w-4 h-4" />}
+                  {item.label}
+                </span>
+              </motion.button>
             ))}
           </nav>
 
@@ -203,7 +234,7 @@ export default function App() {
              </motion.div>
           </div>
 
-          <button className="md:hidden z-50 text-white" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+          <button className="md:hidden z-50 text-white p-2" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
             {isMobileMenuOpen ? <X /> : <Menu />}
           </button>
         </div>
@@ -214,395 +245,268 @@ export default function App() {
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="absolute top-16 left-0 w-full bg-neutral-950 border-b border-neutral-800 p-4 flex flex-col gap-4 md:hidden shadow-2xl"
+              className="absolute top-20 left-0 w-full bg-neutral-950 border-b border-neutral-800 p-4 flex flex-col gap-2 md:hidden shadow-2xl"
             >
-              {['Sobre', 'Serviços', 'Portfólio', 'Contato'].map((item) => (
-                <a 
-                  key={item} 
-                  href={`#${item.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")}`}
-                  onClick={closeMenu}
-                  className="text-lg font-medium text-neutral-300 hover:text-accent-500 py-2 border-b border-neutral-900"
+              {navItems.map((item) => (
+                <button 
+                  key={item.id} 
+                  onClick={() => navigateTo(item.id)}
+                  className={`text-lg font-medium py-3 px-4 rounded-sm text-left transition-colors flex items-center gap-3 ${
+                    currentPage === item.id ? 'bg-accent-600 text-white' : 'text-neutral-300 hover:bg-neutral-900'
+                  }`}
                 >
-                  {item}
-                </a>
+                  {item.icon && <item.icon className="w-5 h-5" />}
+                  {item.label}
+                </button>
               ))}
-              <Button href={socialLinks.whatsapp} className="w-full mt-2">Fazer Orçamento</Button>
+              <Button href={socialLinks.whatsapp} className="w-full mt-4">Fazer Orçamento</Button>
             </motion.div>
           )}
         </AnimatePresence>
       </header>
 
-      <main>
-        {/* HERO */}
-        <section className="relative min-h-screen flex items-center justify-center pt-16 overflow-hidden">
-          {/* Animated Blobs */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-accent-600/20 rounded-full blur-[120px] pointer-events-none animate-pulse-slow"></div>
-          <div className="absolute top-1/3 left-1/3 w-[300px] h-[300px] bg-purple-600/10 rounded-full blur-[100px] pointer-events-none animate-pulse" style={{ animationDuration: '5s' }}></div>
+      {/* CONTEÚDO DINÂMICO (PÁGINAS) */}
+      <main className="flex-grow pt-20">
+        <AnimatePresence mode="wait">
           
-          <div className="max-w-4xl mx-auto px-4 text-center relative z-10">
-            <FadeIn>
-              <motion.div 
-                whileHover={{ scale: 1.05 }}
-                className="inline-block mb-6 px-4 py-1.5 bg-neutral-900/50 backdrop-blur-md border border-accent-500/30 rounded-full text-xs font-bold tracking-widest text-accent-400 uppercase shadow-lg shadow-accent-500/10 cursor-default"
-              >
-                Produção de Vídeo Profissional
-              </motion.div>
-              <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold text-white tracking-tight leading-tight mb-6">
-                Criação de vídeos para seu negócio <br className="hidden md:block"/>
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-neutral-200 to-neutral-500">que entregam resultado.</span>
-              </h1>
-              <p className="text-lg md:text-xl text-neutral-400 mb-8 max-w-2xl mx-auto leading-relaxed">
-                Conteúdo profissional, direto e claro. <br/>Feito para engajar, vender e gerar autoridade.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button href={socialLinks.whatsapp}>Solicitar Orçamento</Button>
-                <Button variant="secondary" href="#portfolio">Ver Portfólio</Button>
-              </div>
-            </FadeIn>
-          </div>
-        </section>
-
-        {/* SOBRE */}
-        <section id="sobre" className="py-24 px-4 bg-neutral-950 relative">
-          <div className="absolute left-0 top-20 w-32 h-32 bg-accent-500/10 rounded-full blur-3xl"></div>
-          <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-center">
-            <FadeIn>
-              <h2 className="text-3xl font-bold text-white mb-6 flex items-center gap-3">
-                <span className="w-1.5 h-8 bg-accent-500 block shadow-[0_0_15px_rgba(59,130,246,0.5)]"></span>
-                Quem é Alex Souza?
-              </h2>
-              <div className="space-y-4 text-neutral-300 text-lg leading-relaxed">
-                <p>Sou especialista em criação de conteúdo e edição estratégica. Transformo ideias brutas em material visual polido, lógico e rentável.</p>
-                <p>Não vendo fórmulas mágicas. Vendo técnica e clareza. Meu estilo é firme e objetivo, focado na qualidade da entrega.</p>
-              </div>
-            </FadeIn>
-            
-            <FadeIn delay={0.2} className="grid gap-4">
-              {[
-                { icon: CheckCircle2, title: "Objetividade", desc: "Direto ao ponto. Economizo seu tempo." },
-                { icon: Clock, title: "Prazos", desc: "Cronograma é compromisso." },
-                { icon: BarChart3, title: "Resultado", desc: "Vídeos estruturados para converter." }
-              ].map((item, i) => (
-                <motion.div 
-                  key={i} 
-                  whileHover={{ x: 10, borderColor: '#3b82f6', backgroundColor: '#171717' }}
-                  className="bg-neutral-900/50 p-6 border border-neutral-800 rounded-sm transition-colors flex items-start gap-4 group"
-                >
-                  <item.icon className="text-accent-500 w-6 h-6 shrink-0 mt-1 group-hover:scale-110 transition-transform" />
-                  <div>
-                    <h3 className="text-white font-bold group-hover:text-accent-400 transition-colors">{item.title}</h3>
-                    <p className="text-neutral-400 text-sm">{item.desc}</p>
-                  </div>
-                </motion.div>
-              ))}
-            </FadeIn>
-          </div>
-        </section>
-
-        {/* SERVIÇOS */}
-        <section id="servicos" className="py-24 px-4 bg-neutral-900 relative overflow-hidden">
-          {/* Background pattern */}
-          <div className="absolute inset-0 opacity-5" style={{ backgroundImage: 'radial-gradient(#3b82f6 1px, transparent 1px)', backgroundSize: '30px 30px' }}></div>
-          
-          <div className="max-w-6xl mx-auto relative z-10">
-            <FadeIn className="text-center mb-16">
-              <h2 className="text-3xl font-bold text-white">Serviços Oferecidos</h2>
-              <p className="text-neutral-400 mt-2">Soluções completas de audiovisual e texto.</p>
-            </FadeIn>
-            
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {services.map((service, idx) => (
-                <FadeIn key={idx} delay={idx * 0.1}>
-                  <motion.div 
-                    whileHover={{ y: -10, borderColor: '#3b82f6' }}
-                    className="bg-neutral-950 p-8 h-full border border-neutral-800 transition-colors rounded-sm group relative"
-                  >
-                    <div className="absolute top-0 right-0 w-20 h-20 bg-accent-500/5 rounded-bl-full -mr-10 -mt-10 group-hover:bg-accent-500/10 transition-colors"></div>
-                    <service.icon className="w-10 h-10 text-accent-500 mb-6 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300 drop-shadow-[0_0_10px_rgba(59,130,246,0.3)]" />
-                    <h3 className="text-xl font-bold text-white mb-1">{service.title}</h3>
-                    <p className="text-xs font-bold text-accent-500 uppercase tracking-widest mb-4">{service.subtitle}</p>
-                    <ul className="space-y-3">
-                      {service.features.map((feat, fIdx) => (
-                        <li key={fIdx} className="text-neutral-400 text-sm flex items-center gap-3">
-                          <span className="w-1.5 h-1.5 bg-neutral-700 group-hover:bg-accent-500 rounded-full transition-colors"></span>
-                          {feat}
-                        </li>
-                      ))}
-                    </ul>
-                  </motion.div>
-                </FadeIn>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* DIFERENCIAIS */}
-        <section className="py-20 px-4 bg-neutral-950 border-y border-neutral-900">
-          <div className="max-w-5xl mx-auto">
-            <FadeIn>
-              <h2 className="text-3xl font-bold text-white mb-10 text-center">Por que contratar?</h2>
-              <div className="grid md:grid-cols-2 gap-x-12 gap-y-6">
-                {[
-                  "Clareza e profissionalismo absoluto",
-                  "Entrega rápida e previsível",
-                  "Processo simples e organizado",
-                  "Vídeos que realmente engajam",
-                  "Uso estratégico de IA para impacto",
-                  "Comunicação limpa que funciona"
-                ].map((item, i) => (
-                  <motion.div 
-                    key={i} 
-                    whileHover={{ x: 5, backgroundColor: 'rgba(59, 130, 246, 0.05)' }}
-                    className="flex items-center gap-4 p-4 border-l-2 border-accent-600 rounded-r-sm transition-colors cursor-default"
-                  >
-                    <CheckCircle2 className="text-accent-500 w-5 h-5 shrink-0" />
-                    <span className="text-white font-medium">{item}</span>
-                  </motion.div>
-                ))}
-              </div>
-            </FadeIn>
-          </div>
-        </section>
-
-        {/* PROCESSO */}
-        <section id="processo" className="py-24 px-4 bg-neutral-900">
-          <div className="max-w-6xl mx-auto">
-            <FadeIn className="text-center mb-16">
-              <h2 className="text-3xl font-bold text-white">Como funciona o processo</h2>
-            </FadeIn>
-            
-            <div className="grid md:grid-cols-4 gap-8">
-              {[
-                { title: "Briefing", desc: "Você me envia a ideia ou objetivo." },
-                { title: "Estrutura", desc: "Eu crio o roteiro e a lógica." },
-                { title: "Produção", desc: "Faço a edição, ajustes e IA." },
-                { title: "Entrega", desc: "Vídeo final pronto para postar." }
-              ].map((step, idx) => (
-                <FadeIn key={idx} delay={idx * 0.1}>
-                  <motion.div 
-                    className="relative h-full"
-                    whileHover={{ y: -5 }}
-                  >
-                    <div className="bg-neutral-850 p-6 pt-12 border border-neutral-800 h-full relative z-10 hover:border-accent-500/50 transition-colors group">
-                      <motion.span 
-                        className="text-6xl font-black text-neutral-800 absolute top-2 right-4 select-none pointer-events-none group-hover:text-neutral-700 transition-colors"
-                        whileHover={{ scale: 1.2, rotate: -10 }}
-                      >
-                        0{idx + 1}
-                      </motion.span>
-                      <h3 className="text-xl font-bold text-white mb-2 relative z-10 group-hover:text-accent-400 transition-colors">{step.title}</h3>
-                      <p className="text-neutral-400 relative z-10 text-sm leading-relaxed">{step.desc}</p>
+          {/* --- PÁGINA INÍCIO --- */}
+          {currentPage === 'inicio' && (
+            <motion.div key="inicio" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="min-h-[calc(100vh-80px)]">
+              <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-accent-600/20 rounded-full blur-[120px] pointer-events-none animate-pulse-slow"></div>
+                <div className="max-w-4xl mx-auto px-4 text-center relative z-10">
+                  <FadeIn>
+                    <motion.div className="inline-block mb-6 px-4 py-1.5 bg-neutral-900/50 backdrop-blur-md border border-accent-500/30 rounded-full text-xs font-bold tracking-widest text-accent-400 uppercase shadow-lg shadow-accent-500/10 cursor-default">
+                      Produção de Vídeo Profissional
+                    </motion.div>
+                    <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold text-white tracking-tight leading-tight mb-6">
+                      Criação de vídeos para seu negócio <br className="hidden md:block"/>
+                      <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-neutral-200 to-neutral-500">que entregam resultado.</span>
+                    </h1>
+                    <p className="text-lg md:text-xl text-neutral-400 mb-8 max-w-2xl mx-auto leading-relaxed">
+                      Conteúdo profissional, direto e claro. Feito para engajar, vender e gerar autoridade.
+                    </p>
+                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                      <Button href={socialLinks.whatsapp}>Solicitar Orçamento</Button>
+                      <Button variant="secondary" onClick={() => navigateTo('portfolio')}>Ver Portfólio</Button>
                     </div>
-                  </motion.div>
-                </FadeIn>
-              ))}
-            </div>
-            <FadeIn delay={0.4} className="text-center mt-12">
-              <p className="text-white font-semibold flex items-center justify-center gap-2 bg-neutral-800/50 inline-block px-6 py-2 rounded-full border border-neutral-800">
-                <CheckCircle2 className="w-5 h-5 text-accent-500" />
-                Zero complicação. Zero perda de tempo.
-              </p>
-            </FadeIn>
-          </div>
-        </section>
-
-        {/* PORTFOLIO DIVIDIDO */}
-        <section id="portfolio" className="py-24 px-4 bg-neutral-950">
-          <div className="max-w-6xl mx-auto">
-            <FadeIn className="text-center mb-16">
-              <h2 className="text-3xl font-bold text-white">Portfólio</h2>
-              <p className="text-neutral-400 mt-2">Clique para ver os trabalhos completos.</p>
-            </FadeIn>
-            
-            {/* SEÇÃO YOUTUBE */}
-            <div className="mb-20">
-              <FadeIn className="flex items-center gap-4 mb-8">
-                <div className="w-10 h-10 bg-red-600 rounded flex items-center justify-center shadow-lg">
-                  <Youtube className="text-white w-6 h-6" />
+                  </FadeIn>
                 </div>
-                <div>
-                  <h3 className="text-xl font-bold text-white">Destaques YouTube</h3>
-                  <p className="text-xs text-neutral-500 uppercase tracking-wider font-bold">@acreviralia</p>
-                </div>
-              </FadeIn>
+              </section>
               
-              <div className="grid md:grid-cols-3 gap-6">
-                {youtubeVideos.map((video, idx) => (
-                  <YoutubeCard key={idx} video={video} idx={idx} />
-                ))}
-              </div>
-              
-              <div className="text-center mt-8">
-                <Button href={socialLinks.youtube} variant="outline" className="text-sm py-2">
-                  Ver Canal Completo
-                </Button>
-              </div>
-            </div>
+              {/* Destaque rápido de diferenciais na home */}
+              <section className="py-12 border-t border-neutral-900 bg-neutral-950">
+                 <div className="max-w-6xl mx-auto px-4 flex flex-wrap justify-center gap-8 text-neutral-500 font-medium text-sm">
+                    <span className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-accent-500"/> Edição Dinâmica</span>
+                    <span className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-accent-500"/> Roteiros Estratégicos</span>
+                    <span className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-accent-500"/> Entrega Rápida</span>
+                 </div>
+              </section>
+            </motion.div>
+          )}
 
-            {/* SEÇÃO INSTAGRAM */}
-            <div>
-              <FadeIn className="flex items-center gap-4 mb-8">
-                <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-orange-500 rounded flex items-center justify-center shadow-lg">
-                  <Instagram className="text-white w-6 h-6" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold text-white">Destaques Instagram</h3>
-                  <p className="text-xs text-neutral-500 uppercase tracking-wider font-bold">@alexsouzaac</p>
-                </div>
-              </FadeIn>
-
-              <div className="grid md:grid-cols-3 gap-6">
-                {instagramPosts.map((post, idx) => (
-                  <InstagramCard key={idx} post={post} idx={idx} />
-                ))}
-              </div>
-              
-               <div className="text-center mt-8">
-                <Button href={socialLinks.instagram} variant="outline" className="text-sm py-2">
-                  Ver Perfil Completo
-                </Button>
-              </div>
-            </div>
-
-          </div>
-        </section>
-
-        {/* ORÇAMENTO */}
-        <section id="orcamento" className="py-24 px-4 bg-neutral-900">
-          <div className="max-w-4xl mx-auto">
-            <FadeIn>
-              <motion.div 
-                whileHover={{ scale: 1.01 }}
-                className="text-center bg-gradient-to-b from-neutral-900 to-neutral-950 border border-neutral-800 p-10 md:p-16 rounded-sm relative overflow-hidden shadow-2xl group"
-              >
-                {/* Glow effect */}
-                <div className="absolute top-0 right-0 w-64 h-64 bg-accent-600/10 rounded-full blur-[80px] -mr-16 -mt-16 pointer-events-none group-hover:bg-accent-600/20 transition-colors duration-500"></div>
-                <div className="absolute bottom-0 left-0 w-64 h-64 bg-purple-600/10 rounded-full blur-[80px] -ml-16 -mb-16 pointer-events-none group-hover:bg-purple-600/20 transition-colors duration-500"></div>
-                
-                <h2 className="text-3xl md:text-5xl font-bold text-white mb-6 relative z-10 leading-tight">
-                  Quer um vídeo para divulgar <br/><span className="text-accent-500">sua empresa ou produto?</span>
-                </h2>
-                <p className="text-lg text-neutral-400 mb-10 max-w-2xl mx-auto relative z-10 leading-relaxed">
-                  Cada projeto tem uma necessidade única. Entre em contato direto comigo para receber uma proposta alinhada ao seu objetivo, sem burocracia.
-                </p>
-                
-                <div className="relative z-10 flex flex-col sm:flex-row justify-center gap-4">
-                  <Button href={socialLinks.whatsapp} className="py-5 px-8 text-lg w-full sm:w-auto shadow-xl shadow-accent-900/30">
-                    <span className="flex items-center justify-center gap-3">
-                       <MessageCircle className="w-6 h-6" />
-                       WhatsApp: (68) 99973-6712
-                    </span>
-                  </Button>
-                  <Button href={socialLinks.instagram} variant="secondary" className="py-5 px-8 text-lg w-full sm:w-auto">
-                    <span className="flex items-center justify-center gap-3">
-                       <Instagram className="w-6 h-6" />
-                       Instagram
-                    </span>
-                  </Button>
-                </div>
-              </motion.div>
-            </FadeIn>
-          </div>
-        </section>
-
-        {/* PROVA SOCIAL */}
-        <section className="py-20 px-4 bg-neutral-950">
-          <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-6">
-            {testimonials.map((t, idx) => (
-              <FadeIn key={idx} delay={idx * 0.1}>
-                <motion.div 
-                  whileHover={{ y: -5, borderColor: '#525252' }}
-                  className="bg-neutral-900 p-8 border border-neutral-800 relative h-full flex flex-col justify-between"
-                >
-                  <div>
-                    <div className="text-accent-500 text-6xl font-serif absolute top-4 left-4 opacity-20">"</div>
-                    <p className="text-neutral-300 italic mb-6 relative z-10 pt-4 leading-relaxed">{t.text}</p>
-                  </div>
-                  <div className="flex items-center gap-3 border-t border-neutral-800 pt-4">
-                    <div className="w-10 h-10 bg-gradient-to-br from-neutral-800 to-neutral-700 rounded-full flex items-center justify-center text-sm font-bold text-white shadow-inner">
-                      {t.author.charAt(0)}
-                    </div>
-                    <div>
-                      <p className="text-white font-bold text-sm">{t.author}</p>
-                      <p className="text-accent-500 text-xs font-semibold uppercase">{t.role}</p>
-                    </div>
-                  </div>
-                </motion.div>
-              </FadeIn>
-            ))}
-          </div>
-        </section>
-
-        {/* FAQ */}
-        <section id="faq" className="py-24 px-4 bg-neutral-900/50">
-          <div className="max-w-2xl mx-auto">
-            <FadeIn>
-              <h2 className="text-3xl font-bold text-white mb-10 text-center">Perguntas Frequentes</h2>
-              <div className="space-y-4">
-                {faqs.map((faq, idx) => (
-                  <motion.div 
-                    key={idx} 
-                    className="border border-neutral-800 bg-neutral-900 rounded-sm overflow-hidden"
-                    whileHover={{ borderColor: '#404040' }}
-                  >
-                    <button 
-                      onClick={() => toggleFaq(idx)}
-                      className="w-full flex items-center justify-between p-5 text-left focus:outline-none hover:bg-neutral-800 transition-colors"
-                    >
-                      <span className="font-bold text-neutral-200">{faq.q}</span>
-                      {openFaq === idx ? <ChevronUp className="w-5 h-5 text-accent-500" /> : <ChevronDown className="w-5 h-5 text-neutral-500" />}
-                    </button>
-                    <AnimatePresence>
-                      {openFaq === idx && (
-                        <motion.div 
-                          initial={{ height: 0, opacity: 0 }} 
-                          animate={{ height: "auto", opacity: 1 }} 
-                          exit={{ height: 0, opacity: 0 }}
-                          className="overflow-hidden bg-neutral-900"
-                        >
-                          <div className="p-5 pt-0 text-neutral-400 border-t border-neutral-800/50">
-                            <p className="mt-4 leading-relaxed">{faq.a}</p>
+          {/* --- PÁGINA SOBRE --- */}
+          {currentPage === 'sobre' && (
+            <motion.div key="sobre" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="min-h-screen">
+              <section className="py-20 px-4">
+                <div className="max-w-4xl mx-auto">
+                   <FadeIn className="text-center mb-16">
+                      <h2 className="text-4xl font-bold text-white mb-4">Sobre o Profissional</h2>
+                      <div className="w-20 h-1 bg-accent-500 mx-auto rounded-full"></div>
+                   </FadeIn>
+                   
+                   <div className="grid md:grid-cols-2 gap-12 items-center mb-20">
+                      <div className="bg-neutral-900 p-8 border border-neutral-800 rounded-sm relative">
+                        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-accent-500 to-purple-600"></div>
+                        <h3 className="text-2xl font-bold text-white mb-4">Alex Souza</h3>
+                        <p className="text-neutral-400 leading-relaxed mb-4">
+                          Especialista em criação de conteúdo e edição estratégica. Meu foco é transformar ideias brutas em material visual polido, lógico e rentável.
+                        </p>
+                        <p className="text-neutral-400 leading-relaxed">
+                          Não vendo fórmulas mágicas. Vendo técnica e clareza. Meu estilo é firme e objetivo, focado na qualidade da entrega.
+                        </p>
+                      </div>
+                      <div className="grid gap-4">
+                        {[
+                          { icon: CheckCircle2, title: "Objetividade", desc: "Direto ao ponto. Economizo seu tempo." },
+                          { icon: Clock, title: "Prazos", desc: "Cronograma é compromisso." },
+                          { icon: BarChart3, title: "Resultado", desc: "Vídeos estruturados para converter." }
+                        ].map((item, i) => (
+                          <div key={i} className="bg-neutral-900/50 p-4 border border-neutral-800 rounded-sm flex items-center gap-4">
+                            <item.icon className="text-accent-500 w-6 h-6 shrink-0" />
+                            <div>
+                              <h3 className="text-white font-bold">{item.title}</h3>
+                              <p className="text-neutral-500 text-sm">{item.desc}</p>
+                            </div>
                           </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </motion.div>
-                ))}
-              </div>
-            </FadeIn>
-          </div>
-        </section>
+                        ))}
+                      </div>
+                   </div>
+
+                   {/* Prova Social no Sobre */}
+                   <div className="border-t border-neutral-800 pt-16">
+                      <h3 className="text-2xl font-bold text-white mb-8 text-center">O que dizem os clientes</h3>
+                      <div className="grid md:grid-cols-3 gap-6">
+                        {testimonials.map((t, idx) => (
+                          <div key={idx} className="bg-neutral-900 p-6 border border-neutral-800 rounded-sm">
+                            <p className="text-neutral-400 italic mb-4 text-sm">"{t.text}"</p>
+                            <p className="text-white font-bold text-xs">— {t.author}, <span className="text-accent-500">{t.role}</span></p>
+                          </div>
+                        ))}
+                      </div>
+                   </div>
+                </div>
+              </section>
+            </motion.div>
+          )}
+
+          {/* --- PÁGINA SERVIÇOS --- */}
+          {currentPage === 'servicos' && (
+            <motion.div key="servicos" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="min-h-screen">
+               <section className="py-20 px-4">
+                 <div className="max-w-6xl mx-auto">
+                    <FadeIn className="text-center mb-16">
+                      <h2 className="text-4xl font-bold text-white mb-4">Meus Serviços</h2>
+                      <p className="text-neutral-400 max-w-2xl mx-auto">Soluções completas de audiovisual e texto para elevar o nível do seu negócio.</p>
+                    </FadeIn>
+
+                    <div className="grid md:grid-cols-3 gap-8 mb-20">
+                      {services.map((service, idx) => (
+                        <FadeIn key={idx} delay={idx * 0.1}>
+                          <div className="bg-neutral-900 p-8 h-full border border-neutral-800 hover:border-accent-500 transition-colors rounded-sm group">
+                            <service.icon className="w-12 h-12 text-accent-500 mb-6 group-hover:scale-110 transition-transform" />
+                            <h3 className="text-xl font-bold text-white mb-1">{service.title}</h3>
+                            <p className="text-xs font-bold text-accent-500 uppercase tracking-widest mb-6">{service.subtitle}</p>
+                            <ul className="space-y-3 border-t border-neutral-800 pt-6">
+                              {service.features.map((feat, fIdx) => (
+                                <li key={fIdx} className="text-neutral-400 text-sm flex items-center gap-3">
+                                  <span className="w-1.5 h-1.5 bg-neutral-600 group-hover:bg-accent-500 rounded-full transition-colors"></span>
+                                  {feat}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        </FadeIn>
+                      ))}
+                    </div>
+
+                    <div className="bg-neutral-900 border border-neutral-800 p-10 rounded-sm">
+                       <h3 className="text-2xl font-bold text-white mb-8 text-center">Como funciona o processo</h3>
+                       <div className="grid md:grid-cols-4 gap-8">
+                          {[
+                            { title: "Briefing", desc: "Você me envia a ideia." },
+                            { title: "Estrutura", desc: "Crio o roteiro e lógica." },
+                            { title: "Produção", desc: "Edição, ajustes e IA." },
+                            { title: "Entrega", desc: "Arquivo pronto." }
+                          ].map((step, idx) => (
+                            <div key={idx} className="relative text-center">
+                              <div className="w-10 h-10 bg-neutral-800 rounded-full flex items-center justify-center text-white font-bold mx-auto mb-4 border border-neutral-700">{idx + 1}</div>
+                              <h4 className="text-white font-bold mb-2">{step.title}</h4>
+                              <p className="text-neutral-500 text-sm">{step.desc}</p>
+                            </div>
+                          ))}
+                       </div>
+                    </div>
+                 </div>
+               </section>
+            </motion.div>
+          )}
+
+          {/* --- PÁGINA PORTFÓLIO --- */}
+          {currentPage === 'portfolio' && (
+            <motion.div key="portfolio" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="min-h-screen">
+              <section className="py-20 px-4">
+                <div className="max-w-6xl mx-auto">
+                   <FadeIn className="text-center mb-16">
+                      <h2 className="text-4xl font-bold text-white mb-4">Portfólio</h2>
+                      <p className="text-neutral-400">Trabalhos recentes selecionados.</p>
+                   </FadeIn>
+
+                   <div className="mb-20">
+                      <div className="flex items-center gap-4 mb-8 border-b border-neutral-800 pb-4">
+                        <Youtube className="text-red-500 w-6 h-6" />
+                        <h3 className="text-xl font-bold text-white">Destaques YouTube</h3>
+                      </div>
+                      <div className="grid md:grid-cols-3 gap-6">
+                        {youtubeVideos.map((video, idx) => (
+                          <YoutubeCard key={idx} video={video} idx={idx} />
+                        ))}
+                      </div>
+                   </div>
+
+                   <div>
+                      <div className="flex items-center gap-4 mb-8 border-b border-neutral-800 pb-4">
+                        <Instagram className="text-pink-500 w-6 h-6" />
+                        <h3 className="text-xl font-bold text-white">Destaques Instagram</h3>
+                      </div>
+                      <div className="grid md:grid-cols-3 gap-6">
+                        {instagramPosts.map((post, idx) => (
+                          <InstagramCard key={idx} post={post} idx={idx} />
+                        ))}
+                      </div>
+                   </div>
+                </div>
+              </section>
+            </motion.div>
+          )}
+
+          {/* --- PÁGINA CONTATO --- */}
+          {currentPage === 'contato' && (
+             <motion.div key="contato" initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 50 }} className="min-h-screen flex flex-col justify-center">
+                <section className="py-20 px-4">
+                   <div className="max-w-4xl mx-auto">
+                      <div className="text-center bg-gradient-to-b from-neutral-900 to-neutral-950 border border-neutral-800 p-10 md:p-20 rounded-sm relative overflow-hidden shadow-2xl">
+                          <div className="absolute top-0 right-0 w-64 h-64 bg-accent-600/10 rounded-full blur-[80px] -mr-16 -mt-16 pointer-events-none"></div>
+                          
+                          <h2 className="text-3xl md:text-5xl font-bold text-white mb-6 leading-tight">
+                            Vamos tirar seu projeto do papel?
+                          </h2>
+                          <p className="text-lg text-neutral-400 mb-10 max-w-2xl mx-auto leading-relaxed">
+                            Entre em contato agora para um orçamento personalizado. Sem compromisso, direto e rápido.
+                          </p>
+                          
+                          <div className="flex flex-col sm:flex-row justify-center gap-4 mb-16">
+                            <Button href={socialLinks.whatsapp} className="py-5 px-8 text-lg w-full sm:w-auto">
+                              <span className="flex items-center justify-center gap-3">
+                                <MessageCircle className="w-6 h-6" />
+                                Chamar no WhatsApp
+                              </span>
+                            </Button>
+                            <Button href={socialLinks.instagram} variant="secondary" className="py-5 px-8 text-lg w-full sm:w-auto">
+                              <span className="flex items-center justify-center gap-3">
+                                <Instagram className="w-6 h-6" />
+                                Instagram
+                              </span>
+                            </Button>
+                          </div>
+
+                          {/* FAQ no Contato */}
+                          <div className="text-left border-t border-neutral-800 pt-10">
+                            <h3 className="text-xl font-bold text-white mb-6 text-center">Dúvidas Frequentes</h3>
+                            <div className="space-y-4 max-w-2xl mx-auto">
+                              {faqs.map((faq, idx) => (
+                                <div key={idx} className="border border-neutral-800 bg-neutral-900/50 rounded-sm overflow-hidden">
+                                  <button onClick={() => toggleFaq(idx)} className="w-full flex items-center justify-between p-4 text-left hover:bg-neutral-800">
+                                    <span className="font-bold text-neutral-300 text-sm">{faq.q}</span>
+                                    {openFaq === idx ? <ChevronUp className="w-4 h-4 text-accent-500" /> : <ChevronDown className="w-4 h-4 text-neutral-500" />}
+                                  </button>
+                                  {openFaq === idx && <div className="p-4 pt-0 text-neutral-400 text-sm mt-2">{faq.a}</div>}
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                      </div>
+                   </div>
+                </section>
+             </motion.div>
+          )}
+
+        </AnimatePresence>
       </main>
 
-      {/* FOOTER */}
-      <footer id="contato" className="bg-neutral-950 pt-24 pb-10 border-t border-neutral-900">
-        <div className="max-w-4xl mx-auto px-4 text-center">
-          <FadeIn>
-            <h2 className="text-3xl md:text-5xl font-extrabold text-white mb-6 leading-tight">
-              Quer um vídeo para divulgar <br/><span className="text-accent-500">sua empresa ou produto?</span>
-            </h2>
-            <p className="text-neutral-400 mb-10 text-lg">
-              Sem promessas vazias. Trabalho sério para quem quer crescer.
-            </p>
-            
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Button href={socialLinks.whatsapp} className="py-4 px-10 text-lg shadow-2xl shadow-accent-500/20">
-                Solicitar Orçamento <ArrowRight className="ml-2 w-5 h-5" />
-              </Button>
-            </motion.div>
-
-            <div className="mt-20 pt-8 border-t border-neutral-900 text-neutral-600 text-sm flex flex-col md:flex-row justify-between items-center gap-4">
-              <p>&copy; {new Date().getFullYear()} Alex Souza.</p>
-              <div className="flex items-center gap-6">
-                 <a href={socialLinks.instagram} target="_blank" className="hover:text-white transition-colors flex items-center gap-2">
-                   <Instagram className="w-4 h-4" /> Instagram
-                 </a>
-                 <span className="w-1 h-1 bg-neutral-800 rounded-full"></span>
-                 <span>Design Objetivo.</span>
-              </div>
-            </div>
-          </FadeIn>
-        </div>
+      {/* FOOTER FIXO (SEMPRE VISÍVEL) */}
+      <footer className="bg-neutral-950 border-t border-neutral-900 py-8 text-center text-sm text-neutral-600">
+         <p>&copy; {new Date().getFullYear()} Alex Souza. Todos os direitos reservados.</p>
       </footer>
     </div>
   );

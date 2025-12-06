@@ -2,8 +2,8 @@
 
 // 1. LINKS DAS SUAS REDES SOCIAIS
 export const socialLinks = {
-  // Adicionado o parâmetro ?text= com a mensagem codificada para funcionar acentos e espaços
-  whatsapp: "https://wa.me/5568999736712?text=Ol%C3%A1%20tenho%20interesse%20em%20contratar%20seus%20servi%C3%A7os%2C%20poderia%20me%20dizer%20como%20funciona%3F", 
+  // Mensagem atualizada: "Olá vi seu anuncio no site e gostaria de mais informações sobre os serviços!"
+  whatsapp: "https://wa.me/5568999736712?text=Ol%C3%A1%20vi%20seu%20anuncio%20no%20site%20e%20gostaria%20de%20mais%20informa%C3%A7%C3%B5es%20sobre%20os%20servi%C3%A7os%21", 
   instagram: "https://instagram.com/alexsouzaac", 
   youtube: "https://youtube.com/@acreviralia" 
 };
