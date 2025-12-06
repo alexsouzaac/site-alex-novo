@@ -1,12 +1,20 @@
 import React, { useState } from 'react';
 import { 
   Video, Zap, CheckCircle2, Clock, BarChart3, Film, PenTool, 
-  MessageSquare, Scissors, ChevronDown, ChevronUp, BrainCircuit, 
-  LayoutTemplate, MessageCircle, Menu, X, ExternalLink, Instagram
+  MessageSquare, ChevronDown, ChevronUp, BrainCircuit, 
+  LayoutTemplate, MessageCircle, Menu, X, Instagram, Youtube, PlayCircle
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { portfolioVideos, socialLinks } from './portfolio';
 
-// --- COMPONENTS REUTILIZÁVEIS ---
+// --- FUNÇÃO AUXILIAR PARA EXTRAIR ID DO YOUTUBE ---
+const getYoutubeId = (url: string) => {
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=|shorts\/)([^#&?]*).*/;
+  const match = url.match(regExp);
+  return (match && match[2].length === 11) ? match[2] : null;
+};
+
+// --- COMPONENTS ---
 
 const FadeIn: React.FC<{ children: React.ReactNode; delay?: number; className?: string }> = ({ children, delay = 0, className = "" }) => (
   <motion.div
@@ -34,6 +42,59 @@ const Button = ({ children, variant = 'primary', href, className = '', ...props 
     return <a href={href} target="_blank" rel="noopener noreferrer" className={combinedClasses} {...props}>{children}</a>;
   }
   return <button className={combinedClasses} {...props}>{children}</button>;
+};
+
+// Componente isolado de Vídeo - Agora funciona como Link
+interface VideoCardProps {
+  video: {
+    link: string;
+    title: string;
+    category: string;
+  };
+  idx: number;
+}
+
+const VideoCard: React.FC<VideoCardProps> = ({ video, idx }) => {
+  const videoId = getYoutubeId(video.link);
+
+  if (!videoId) return null;
+
+  // URL da Thumbnail de Alta Qualidade
+  const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+
+  return (
+    <FadeIn delay={idx * 0.1}>
+      <a 
+        href={video.link} 
+        target="_blank" 
+        rel="noopener noreferrer"
+        className="block bg-neutral-900 border border-neutral-800 rounded-sm overflow-hidden group hover:border-accent-500 transition-colors"
+      >
+        {/* Área da Capa */}
+        <div className="aspect-video w-full bg-black relative overflow-hidden">
+          <img 
+            src={thumbnailUrl} 
+            alt={video.title} 
+            className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500"
+          />
+          <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/0 transition-colors">
+            <div className="w-16 h-16 bg-accent-600/90 rounded-full flex items-center justify-center shadow-2xl group-hover:scale-110 group-hover:bg-red-600 transition-all duration-300">
+              <PlayCircle className="w-8 h-8 text-white fill-white ml-1" />
+            </div>
+          </div>
+        </div>
+
+        {/* Descrição */}
+        <div className="p-4 flex items-center justify-between">
+          <div>
+            <h3 className="font-bold text-white text-lg leading-tight group-hover:text-accent-500 transition-colors">{video.title}</h3>
+            <p className="text-neutral-500 text-xs uppercase tracking-widest font-bold mt-1 group-hover:text-neutral-400">{video.category}</p>
+          </div>
+          <Youtube className="w-6 h-6 text-neutral-600 group-hover:text-red-600 transition-colors" />
+        </div>
+      </a>
+    </FadeIn>
+  );
 };
 
 // --- DATA ---
@@ -79,7 +140,6 @@ export default function App() {
             ALEX<span className="text-accent-500">SOUZA</span>
           </div>
 
-          {/* Desktop Nav */}
           <nav className="hidden md:flex gap-8 text-sm font-medium text-neutral-400">
             {['Sobre', 'Serviços', 'Portfólio', 'Contato'].map((item) => (
               <a key={item} href={`#${item.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")}`} className="hover:text-white transition-colors relative group">
@@ -90,19 +150,17 @@ export default function App() {
           </nav>
 
           <div className="hidden md:flex items-center gap-3">
-             <a href="https://instagram.com/alexsouzaac" target="_blank" className="text-neutral-400 hover:text-white transition-colors">
+             <a href={socialLinks.instagram} target="_blank" className="text-neutral-400 hover:text-white transition-colors">
                 <Instagram className="w-5 h-5" />
              </a>
-             <Button variant="primary" className="py-2 px-4 text-xs" href="https://wa.me/5568999736712">Orçamento</Button>
+             <Button variant="primary" className="py-2 px-4 text-xs" href={socialLinks.whatsapp}>Orçamento</Button>
           </div>
 
-          {/* Mobile Toggle */}
           <button className="md:hidden z-50 text-white" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
             {isMobileMenuOpen ? <X /> : <Menu />}
           </button>
         </div>
 
-        {/* Mobile Nav */}
         <AnimatePresence>
           {isMobileMenuOpen && (
             <motion.div 
@@ -121,7 +179,7 @@ export default function App() {
                   {item}
                 </a>
               ))}
-              <Button href="https://wa.me/5568999736712" className="w-full mt-2">Fazer Orçamento</Button>
+              <Button href={socialLinks.whatsapp} className="w-full mt-2">Fazer Orçamento</Button>
             </motion.div>
           )}
         </AnimatePresence>
@@ -145,7 +203,7 @@ export default function App() {
                 Conteúdo profissional, direto e claro. <br/>Feito para engajar, vender e gerar autoridade.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button href="https://wa.me/5568999736712">Solicitar Orçamento</Button>
+                <Button href={socialLinks.whatsapp}>Solicitar Orçamento</Button>
                 <Button variant="secondary" href="#portfolio">Ver Portfólio</Button>
               </div>
             </FadeIn>
@@ -271,34 +329,30 @@ export default function App() {
           </div>
         </section>
 
-        {/* PORTFOLIO */}
+        {/* PORTFOLIO (YOUTUBE LINK EXTERNO) */}
         <section id="portfolio" className="py-24 px-4 bg-neutral-950">
           <div className="max-w-6xl mx-auto">
             <FadeIn className="text-center mb-12">
               <h2 className="text-3xl font-bold text-white">Portfólio</h2>
-              <p className="text-neutral-400 mt-2">Confira meus trabalhos mais recentes.</p>
+              <p className="text-neutral-400 mt-2">Confira meus trabalhos recentes. Clique para assistir no YouTube.</p>
             </FadeIn>
             
-            <div className="grid md:grid-cols-2 gap-8">
-              {[
-                { title: "Ver Reels & Vídeos Curtos", icon: Video, color: "from-purple-900/40" },
-                { title: "Portfólio Comercial", icon: Film, color: "from-blue-900/40" }
-              ].map((item, idx) => (
-                <FadeIn key={idx} delay={idx * 0.2}>
-                  <a href="https://instagram.com/alexsouzaac" target="_blank" className="group relative overflow-hidden bg-neutral-900 border border-neutral-800 aspect-video flex items-center justify-center cursor-pointer hover:border-accent-500 transition-all">
-                    <div className={`absolute inset-0 bg-gradient-to-tr ${item.color} via-neutral-900 to-neutral-950 opacity-80 group-hover:opacity-60 transition-opacity`}></div>
-                    <div className="relative z-10 text-center p-6 transform group-hover:scale-105 transition-transform duration-300">
-                      <item.icon className="w-16 h-16 text-accent-500 mx-auto mb-4 drop-shadow-lg" />
-                      <h3 className="text-2xl font-bold text-white mb-2">{item.title}</h3>
-                      <p className="text-neutral-400 text-sm font-medium flex items-center justify-center gap-2">
-                        <Instagram className="w-4 h-4" /> @alexsouzaac
-                      </p>
-                      <span className="inline-block mt-6 text-xs font-bold text-accent-500 uppercase tracking-widest border-b border-accent-500 pb-1">Acessar Agora</span>
-                    </div>
-                  </a>
-                </FadeIn>
+            <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-8">
+              {portfolioVideos.map((video, idx) => (
+                <VideoCard key={idx} video={video} idx={idx} />
               ))}
             </div>
+
+            <FadeIn delay={0.4} className="mt-12 flex justify-center gap-4 flex-wrap">
+              <Button href={socialLinks.youtube} variant="outline" className="gap-2">
+                <PlayCircle className="w-5 h-5" />
+                Ver Canal Completo
+              </Button>
+              <Button href={socialLinks.instagram} variant="outline" className="gap-2">
+                <Instagram className="w-5 h-5" />
+                Ver Reels no Instagram
+              </Button>
+            </FadeIn>
           </div>
         </section>
 
@@ -316,13 +370,13 @@ export default function App() {
               </p>
               
               <div className="relative z-10 flex flex-col sm:flex-row justify-center gap-4">
-                <Button href="https://wa.me/5568999736712" className="py-5 px-8 text-lg w-full sm:w-auto">
+                <Button href={socialLinks.whatsapp} className="py-5 px-8 text-lg w-full sm:w-auto">
                   <span className="flex items-center justify-center gap-3">
                      <MessageCircle className="w-6 h-6" />
                      WhatsApp: (68) 99973-6712
                   </span>
                 </Button>
-                <Button href="https://instagram.com/alexsouzaac" variant="secondary" className="py-5 px-8 text-lg w-full sm:w-auto">
+                <Button href={socialLinks.instagram} variant="secondary" className="py-5 px-8 text-lg w-full sm:w-auto">
                   <span className="flex items-center justify-center gap-3">
                      <Instagram className="w-6 h-6" />
                      Instagram
@@ -393,20 +447,20 @@ export default function App() {
         <div className="max-w-4xl mx-auto px-4 text-center">
           <FadeIn>
             <h2 className="text-3xl md:text-5xl font-extrabold text-white mb-6">
-              Quer um vídeo profissional que <br/><span className="text-accent-500">gera resultado?</span>
+              Quer um vídeo para divulgar <br/><span className="text-accent-500">sua empresa ou produto?</span>
             </h2>
             <p className="text-neutral-400 mb-10 text-lg">
               Sem promessas vazias. Trabalho sério para quem quer crescer.
             </p>
             
-            <Button href="https://wa.me/5568999736712" className="py-4 px-10 text-lg animate-pulse hover:animate-none">
+            <Button href={socialLinks.whatsapp} className="py-4 px-10 text-lg animate-pulse hover:animate-none">
               Solicitar Orçamento
             </Button>
 
             <div className="mt-20 pt-8 border-t border-neutral-900 text-neutral-600 text-sm flex flex-col md:flex-row justify-between items-center gap-4">
               <p>&copy; {new Date().getFullYear()} Alex Souza.</p>
               <div className="flex items-center gap-6">
-                 <a href="https://instagram.com/alexsouzaac" target="_blank" className="hover:text-white transition-colors">Instagram</a>
+                 <a href={socialLinks.instagram} target="_blank" className="hover:text-white transition-colors">Instagram</a>
                  <span className="w-1 h-1 bg-neutral-800 rounded-full"></span>
                  <span>Design Objetivo.</span>
               </div>
