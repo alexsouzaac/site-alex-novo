@@ -281,10 +281,13 @@ export default function App() {
           <motion.div 
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="font-bold text-xl md:text-2xl tracking-tighter text-white z-50 cursor-pointer"
+            className="font-bold text-xl md:text-2xl tracking-tighter text-white z-50 cursor-pointer flex items-center gap-3"
             onClick={() => navigateTo('inicio')}
           >
-            ALEX<span className="text-accent-500">SOUZA</span>
+            <div className="w-8 h-8 md:w-10 md:h-10 rounded-full overflow-hidden border border-neutral-700">
+              <img src={profileImage} alt="Profile" className="w-full h-full object-cover" />
+            </div>
+            <span>ALEX<span className="text-accent-500">SOUZA</span></span>
           </motion.div>
 
           <nav className="hidden md:flex gap-1 items-center">
@@ -317,16 +320,6 @@ export default function App() {
           </nav>
 
           <div className="hidden md:flex items-center gap-3">
-             <motion.a 
-               initial={{ opacity: 0, scale: 0 }}
-               animate={{ opacity: 1, scale: 1 }}
-               whileHover={{ scale: 1.1, rotate: 5 }}
-               href={socialLinks.instagram} 
-               target="_blank" 
-               className="text-neutral-400 hover:text-white transition-colors"
-             >
-                <Instagram className="w-5 h-5" />
-             </motion.a>
              <motion.div initial={{ opacity: 0, scale: 0 }} animate={{ opacity: 1, scale: 1 }}>
                 <Button variant="primary" className="py-2 px-4 text-xs" href={socialLinks.whatsapp}>Orçamento</Button>
              </motion.div>

@@ -2,9 +2,36 @@
 <html lang="pt-BR" class="scroll-smooth">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Alex Souza | Criação de Conteúdo e Vídeos</title>
-    <meta name="description" content="Portfólio e Landing Page profissional para Alex Souza.">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    
+    <!-- TÍTULO E DESCRIÇÃO (Aparece no Google) -->
+    <title>Alex Souza | Especialista em Vídeos com IA</title>
+    <meta name="description" content="Transforme seu negócio com vídeos profissionais feitos com Inteligência Artificial. Comerciais, Reels e Estratégia de Conteúdo.">
+    <meta name="theme-color" content="#0a0a0a">
+
+    <!-- OPEN GRAPH (Aparece no WhatsApp, LinkedIn, Facebook) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://site-alex-novo-8c6s.vercel.app/" />
+    <meta property="og:title" content="Alex Souza | Produção de Vídeo com IA" />
+    <meta property="og:description" content="Especialista em produção audiovisual com Inteligência Artificial. Comerciais, Reels e Conteúdo Estratégico. Clique para ver o portfólio." />
+    <!-- Usando sua foto de perfil do GitHub como imagem de capa do link -->
+    <meta property="og:image" content="https://raw.githubusercontent.com/alexsouzaac/site-alex-novo/main/foto-perfil/572782279_18537239245052533_242650883687521049_n.jpg" />
+    <meta property="og:image:width" content="1080" />
+    <meta property="og:image:height" content="1080" />
+
+    <!-- TWITTER CARD -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Alex Souza | Vídeos com IA" />
+    <meta name="twitter:description" content="Produção de conteúdo audiovisual de alta performance com Inteligência Artificial." />
+    <meta name="twitter:image" content="https://raw.githubusercontent.com/alexsouzaac/site-alex-novo/main/foto-perfil/572782279_18537239245052533_242650883687521049_n.jpg" />
+
+    <!-- FAVICON MODERNO (Gerado via SVG para alta definição) -->
+    <!-- Ícone: Um botão de Play estilizado com um círculo Tech -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cdefs%3E%3ClinearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%233b82f6;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%231e3a8a;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle cx='256' cy='256' r='256' fill='url(%23grad)'/%3E%3Cpath d='M192 128 L384 256 L192 384 Z' fill='white'/%3E%3C/svg%3E">
+    
+    <!-- ÍCONE PARA APPLE (IOS) -->
+    <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/alexsouzaac/site-alex-novo/main/foto-perfil/572782279_18537239245052533_242650883687521049_n.jpg">
+
     <!-- Tailwind CSS via CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -14,7 +41,7 @@
             fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
             colors: {
               neutral: { 850: '#1f1f1f', 900: '#171717', 950: '#0a0a0a' },
-              accent: { 500: '#3b82f6', 600: '#2563eb', 900: '#1e3a8a' }
+              accent: { 400: '#60a5fa', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8', 900: '#1e3a8a' }
             },
             animation: { 'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite' }
           },
@@ -31,11 +58,11 @@
   <script type="importmap">
 {
   "imports": {
-    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.1/",
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.556.0",
     "@vitejs/plugin-react": "https://aistudiocdn.com/@vitejs/plugin-react@^5.1.1",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.1/",
     "react/": "https://aistudiocdn.com/react@^19.2.1/",
     "react": "https://aistudiocdn.com/react@^19.2.1",
-    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.556.0",
     "vite": "https://aistudiocdn.com/vite@^7.2.6",
     "framer-motion": "https://aistudiocdn.com/framer-motion@^12.23.25"
   }
