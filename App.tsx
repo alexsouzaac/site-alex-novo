@@ -1,13 +1,14 @@
+
 import React, { useState } from 'react';
 import { 
   Video, Zap, CheckCircle2, Clock, BarChart3, Film, PenTool, 
   MessageSquare, ChevronDown, ChevronUp, BrainCircuit, 
-  LayoutTemplate, MessageCircle, Menu, X, Instagram, Youtube, PlayCircle, ArrowRight, ExternalLink, Home
+  LayoutTemplate, MessageCircle, Menu, X, Instagram, Youtube, PlayCircle, ExternalLink, Home, Handshake, CalendarCheck, Sparkles, Cpu
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { youtubeVideos, instagramPosts, socialLinks } from './portfolio';
+import { youtubeVideos, instagramPosts, socialLinks, partners, profileImage } from './portfolio';
 
-// --- FUNÇÃO AUXILIAR PARA EXTRAIR ID DO YOUTUBE ---
+// --- FUNÇÃO AUXILIAR ---
 const getYoutubeId = (url: string) => {
   const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=|shorts\/)([^#&?]*).*/;
   const match = url.match(regExp);
@@ -18,10 +19,10 @@ const getYoutubeId = (url: string) => {
 
 const FadeIn: React.FC<{ children: React.ReactNode; delay?: number; className?: string }> = ({ children, delay = 0, className = "" }) => (
   <motion.div
-    initial={{ opacity: 0, y: 30 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true, margin: "-50px" }}
-    transition={{ duration: 0.6, delay, ease: "easeOut" }}
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    exit={{ opacity: 0, y: -20 }}
+    transition={{ duration: 0.4, delay, ease: "easeOut" }}
     className={className}
   >
     {children}
@@ -29,7 +30,7 @@ const FadeIn: React.FC<{ children: React.ReactNode; delay?: number; className?: 
 );
 
 const Button = ({ children, variant = 'primary', href, onClick, className = '', ...props }: any) => {
-  const baseStyles = "inline-flex items-center justify-center px-8 py-3 text-base font-bold transition-all duration-200 uppercase tracking-wide rounded-sm cursor-pointer relative overflow-hidden group";
+  const baseStyles = "inline-flex items-center justify-center px-8 py-3 text-base font-bold transition-all duration-200 uppercase tracking-wide rounded-sm cursor-pointer relative overflow-hidden group w-full md:w-auto";
   const variants = {
     primary: "bg-accent-600 text-white shadow-lg shadow-accent-900/20 hover:shadow-accent-500/50 hover:-translate-y-1",
     secondary: "bg-white text-neutral-900 hover:bg-neutral-200 hover:-translate-y-1 shadow-lg shadow-white/10",
@@ -40,7 +41,7 @@ const Button = ({ children, variant = 'primary', href, onClick, className = '', 
 
   const content = (
     <>
-      <span className="relative z-10 flex items-center gap-2">{children}</span>
+      <span className="relative z-10 flex items-center justify-center gap-2">{children}</span>
       {variant === 'primary' && (
         <div className="absolute inset-0 bg-gradient-to-r from-accent-500 to-accent-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
       )}
@@ -50,10 +51,45 @@ const Button = ({ children, variant = 'primary', href, onClick, className = '', 
   if (href) {
     return <motion.a whileTap={{ scale: 0.95 }} href={href} target="_blank" rel="noopener noreferrer" className={combinedClasses} {...props}>{content}</motion.a>;
   }
+  
   return <motion.button whileTap={{ scale: 0.95 }} onClick={onClick} className={combinedClasses} {...props}>{content}</motion.button>;
 };
 
-// Componente Card YouTube
+// --- PARTNER TICKER ---
+const PartnerTicker = ({ onNavigate }: { onNavigate: () => void }) => {
+  if (partners.length === 0) return null;
+
+  const tickerItems = [...partners, ...partners, ...partners, ...partners];
+
+  return (
+    <div 
+      className="w-full bg-neutral-950 border-b border-neutral-800 py-4 overflow-hidden relative cursor-pointer group select-none z-30"
+      onClick={onNavigate}
+    >
+      <div className="absolute left-0 top-0 bottom-0 w-10 md:w-32 z-10 bg-gradient-to-r from-neutral-950 to-transparent pointer-events-none"></div>
+      <div className="absolute right-0 top-0 bottom-0 w-10 md:w-32 z-10 bg-gradient-to-l from-neutral-950 to-transparent pointer-events-none"></div>
+
+      <motion.div 
+        className="flex items-center gap-16 w-max pl-4"
+        animate={{ x: ["0%", "-50%"] }}
+        transition={{ repeat: Infinity, ease: "linear", duration: 40 }}
+      >
+        {tickerItems.map((partner, idx) => (
+           <div key={idx} className="flex items-center gap-4 opacity-60 group-hover:opacity-100 transition-opacity duration-300">
+              <div className="w-8 h-8 rounded-full overflow-hidden border border-neutral-800 bg-neutral-900 shrink-0">
+                <img src={partner.image} alt={partner.name} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all" />
+              </div>
+              <div>
+                 <p className="text-xs font-bold text-neutral-300 uppercase tracking-wider whitespace-nowrap">{partner.name}</p>
+              </div>
+           </div>
+        ))}
+      </motion.div>
+    </div>
+  );
+};
+
+// Cards
 const YoutubeCard: React.FC<{ video: { link: string; title: string; category: string }; idx: number }> = ({ video, idx }) => {
   const videoId = getYoutubeId(video.link);
   if (!videoId) return null;
@@ -77,10 +113,7 @@ const YoutubeCard: React.FC<{ video: { link: string; title: string; category: st
             transition={{ duration: 0.5 }}
           />
           <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/40 transition-colors">
-            <motion.div 
-              className="w-14 h-14 bg-red-600 rounded-full flex items-center justify-center shadow-2xl backdrop-blur-sm"
-              whileHover={{ scale: 1.2 }}
-            >
+            <motion.div className="w-14 h-14 bg-red-600 rounded-full flex items-center justify-center shadow-2xl backdrop-blur-sm" whileHover={{ scale: 1.2 }}>
               <PlayCircle className="w-6 h-6 text-white fill-white ml-1" />
             </motion.div>
           </div>
@@ -97,7 +130,6 @@ const YoutubeCard: React.FC<{ video: { link: string; title: string; category: st
   );
 };
 
-// Componente Card Instagram
 const InstagramCard: React.FC<{ post: { link: string; title: string; category: string }; idx: number }> = ({ post, idx }) => {
   return (
     <FadeIn delay={idx * 0.1}>
@@ -124,28 +156,50 @@ const InstagramCard: React.FC<{ post: { link: string; title: string; category: s
   );
 };
 
-// --- DATA ---
+const PartnerCard: React.FC<{ partner: any; idx: number }> = ({ partner, idx }) => {
+  return (
+    <FadeIn delay={idx * 0.1} className="w-full max-w-md flex-grow">
+      <div className="bg-neutral-900 border border-neutral-800 rounded-sm p-8 flex flex-col items-center text-center hover:border-accent-500 transition-all group hover:-translate-y-1 h-full">
+        <div className="w-24 h-24 rounded-full overflow-hidden mb-6 border-2 border-accent-500/30 group-hover:border-accent-500 transition-colors shadow-lg">
+          <img src={partner.image} alt={partner.name} className="w-full h-full object-cover" />
+        </div>
+        <h3 className="text-xl font-bold text-white mb-2">{partner.name}</h3>
+        <p className="text-accent-500 text-xs font-bold uppercase tracking-widest mb-4">{partner.role}</p>
+        <p className="text-neutral-400 text-sm leading-relaxed mb-6 flex-grow whitespace-pre-line">{partner.description}</p>
+        
+        <div className="flex flex-col gap-3 w-full">
+          <Button href={partner.link} variant="outline" className="w-full text-xs py-2 px-4 hover:bg-accent-600 hover:border-accent-600 hover:text-white">
+             <CalendarCheck className="w-4 h-4 mr-2" />
+             {partner.buttonText || "Agendar Serviço"}
+          </Button>
 
+          {partner.instagram && (
+            <Button href={partner.instagram} variant="secondary" className="w-full text-xs py-2 px-4">
+              <Instagram className="w-4 h-4 mr-2" />
+              Conheça o Profissional
+            </Button>
+          )}
+        </div>
+      </div>
+    </FadeIn>
+  );
+};
+
+// --- DATA ---
 const services = [
-  { title: "Vídeos Curtos", subtitle: "Reels & TikTok", icon: Zap, features: ["Edição dinâmica", "Cortes inteligentes", "Headlines fortes", "Música trend"] },
-  { title: "Comerciais", subtitle: "Ads & VSL", icon: BrainCircuit, features: ["Animações fluidas", "Narração IA/Humana", "Roteiro profissional", "Alta conversão"] },
+  { title: "Vídeos Curtos", subtitle: "Reels & TikTok", icon: Zap, features: ["Feitos com IAs poderosas", "Edição dinâmica", "Cortes inteligentes", "Música trend"] },
+  { title: "Comerciais", subtitle: "Ads & VSL", icon: BrainCircuit, features: ["Animações fluidas", "Narração IA ou Humana", "Roteiro profissional", "Qualidade Ads"] },
   { title: "Institucional", subtitle: "Branding", icon: LayoutTemplate, features: ["Autoridade visual", "Edição limpa", "Storytelling", "Acabamento premium"] },
   { title: "Roteiros", subtitle: "Copywriting", icon: PenTool, features: ["Lógica de vendas", "Ganchos de retenção", "CTAs claros", "Persuasão"] },
-  { title: "Consultoria", subtitle: "Express", icon: MessageSquare, features: ["Chamada de 20 min", "Análise de perfil", "Direcionamento", "Sem enrolação"] }
-];
-
-const testimonials = [
-  { text: "Recebi exatamente o que pedi — direto, claro e profissional.", author: "Ricardo M.", role: "Empresário" },
-  { text: "O vídeo aumentou minhas conversões em poucos dias. O roteiro fez toda a diferença.", author: "Ana P.", role: "Mentora de Vendas" },
-  { text: "Finalmente alguém que entrega o que promete sem ficar dando voltas.", author: "Carlos E.", role: "Gestor de Tráfego" }
+  { title: "Consultoria", subtitle: "Conteúdo", icon: MessageSquare, features: ["Chamada de 20 min", "Análise de perfil", "Direcionamento", "Estratégia"] }
 ];
 
 const faqs = [
   { q: "Em quanto tempo recebo o vídeo?", a: "O prazo médio é de 2 a 5 dias úteis, dependendo da complexidade do projeto. Prazos de urgência podem ser negociados." },
   { q: "Posso pedir alterações?", a: "Sim. O orçamento inclui uma rodada de ajustes pontuais. Alterações estruturais no roteiro após aprovação serão cobradas à parte." },
-  { q: "Que tipo de vídeo você faz?", a: "Foco em vídeos para internet: Reels, TikTok, anúncios (Ads), VSLs curtas e institucionais para redes sociais." },
-  { q: "Como funciona o pagamento?", a: "50% no ato da contratação para reserva de agenda e início do roteiro/edição, e 50% na entrega do arquivo final." },
-  { q: "Você usa IA no processo?", a: "Sim, utilizo IA de forma estratégica para otimizar roteiros, melhorar qualidade de áudio e criar elementos visuais quando necessário." }
+  { q: "Que tipo de vídeo você faz?", a: "Foco em vídeos para internet: Reels, TikTok, anúncios (Ads) e institucionais para redes sociais." },
+  { q: "Como funciona o pagamento?", a: "50% no ato da contratação para reserva de agenda e início do roteiro/edição, e 50% na entrega do arquivo final. Pagamento via PIX." },
+  { q: "Você usa IA no processo?", a: "Sim, sou especialista em IA. Utilizo para otimizar roteiros, melhorar qualidade de áudio e criar elementos visuais exclusivos." }
 ];
 
 // --- APP COMPONENT ---
@@ -168,6 +222,7 @@ export default function App() {
     { id: 'sobre', label: 'Sobre' },
     { id: 'servicos', label: 'Serviços' },
     { id: 'portfolio', label: 'Portfólio' },
+    { id: 'parcerias', label: 'Parcerias', icon: Handshake },
     { id: 'contato', label: 'Contato' }
   ];
 
@@ -194,13 +249,12 @@ export default function App() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.1 }}
                 onClick={() => navigateTo(item.id)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 relative flex items-center gap-2 ${
+                className={`px-3 py-2 rounded-full text-xs font-medium transition-all duration-300 relative flex items-center gap-1.5 ${
                   currentPage === item.id 
                     ? 'text-white' 
                     : 'text-neutral-400 hover:text-white hover:bg-neutral-800'
                 }`}
               >
-                {/* Indicador de ativo */}
                 {currentPage === item.id && (
                    <motion.div 
                      layoutId="navbar-indicator"
@@ -208,10 +262,8 @@ export default function App() {
                      transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                    />
                 )}
-                
-                {/* Conteúdo do botão */}
-                <span className="relative z-10 flex items-center gap-2">
-                  {item.icon && <item.icon className="w-4 h-4" />}
+                <span className="relative z-10 flex items-center gap-1.5">
+                  {item.icon && <item.icon className="w-3.5 h-3.5" />}
                   {item.label}
                 </span>
               </motion.button>
@@ -271,20 +323,31 @@ export default function App() {
           
           {/* --- PÁGINA INÍCIO --- */}
           {currentPage === 'inicio' && (
-            <motion.div key="inicio" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="min-h-[calc(100vh-80px)]">
-              <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
+            <motion.div key="inicio" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex flex-col">
+              
+              {/* TICKER DE PARCEIROS */}
+              <div className="w-full z-20">
+                 <PartnerTicker onNavigate={() => navigateTo('parcerias')} />
+              </div>
+
+              <section className="relative flex-grow py-16 flex flex-col items-center justify-center overflow-hidden">
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-accent-600/20 rounded-full blur-[120px] pointer-events-none animate-pulse-slow"></div>
-                <div className="max-w-4xl mx-auto px-4 text-center relative z-10">
+                
+                {/* Background Tech Elements */}
+                <div className="absolute inset-0 opacity-20 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, rgba(255,255,255,0.15) 1px, transparent 0)', backgroundSize: '40px 40px' }}></div>
+
+                <div className="max-w-4xl mx-auto px-4 text-center relative z-10 mt-8">
                   <FadeIn>
-                    <motion.div className="inline-block mb-6 px-4 py-1.5 bg-neutral-900/50 backdrop-blur-md border border-accent-500/30 rounded-full text-xs font-bold tracking-widest text-accent-400 uppercase shadow-lg shadow-accent-500/10 cursor-default">
-                      Produção de Vídeo Profissional
+                    <motion.div className="inline-flex items-center gap-2 mb-6 px-4 py-1.5 bg-neutral-900/80 backdrop-blur-md border border-accent-500/30 rounded-full text-xs font-bold tracking-widest text-accent-400 uppercase shadow-lg shadow-accent-500/10 cursor-default">
+                      <Sparkles className="w-3 h-3" />
+                      Especialista em produção de vídeos com IA
                     </motion.div>
                     <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold text-white tracking-tight leading-tight mb-6">
-                      Criação de vídeos para seu negócio <br className="hidden md:block"/>
-                      <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-neutral-200 to-neutral-500">que entregam resultado.</span>
+                      Criamos vídeos profissionais utilizando as IAs <br className="hidden md:block"/>
+                      <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent-400 to-purple-500">mais avançadas do mercado.</span>
                     </h1>
                     <p className="text-lg md:text-xl text-neutral-400 mb-8 max-w-2xl mx-auto leading-relaxed">
-                      Conteúdo profissional, direto e claro. Feito para engajar, vender e gerar autoridade.
+                      Conteúdo exclusivo para seu negócio.
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
                       <Button href={socialLinks.whatsapp}>Solicitar Orçamento</Button>
@@ -294,12 +357,11 @@ export default function App() {
                 </div>
               </section>
               
-              {/* Destaque rápido de diferenciais na home */}
-              <section className="py-12 border-t border-neutral-900 bg-neutral-950">
+              <section className="py-12 border-t border-neutral-900 bg-neutral-950 mt-auto">
                  <div className="max-w-6xl mx-auto px-4 flex flex-wrap justify-center gap-8 text-neutral-500 font-medium text-sm">
-                    <span className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-accent-500"/> Edição Dinâmica</span>
-                    <span className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-accent-500"/> Roteiros Estratégicos</span>
-                    <span className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-accent-500"/> Entrega Rápida</span>
+                    <span className="flex items-center gap-2"><Cpu className="w-4 h-4 text-accent-500"/> Inteligência Artificial</span>
+                    <span className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-accent-500"/> Alta Definição</span>
+                    <span className="flex items-center gap-2"><Clock className="w-4 h-4 text-accent-500"/> Entrega Rápida</span>
                  </div>
               </section>
             </motion.div>
@@ -315,42 +377,34 @@ export default function App() {
                       <div className="w-20 h-1 bg-accent-500 mx-auto rounded-full"></div>
                    </FadeIn>
                    
-                   <div className="grid md:grid-cols-2 gap-12 items-center mb-20">
+                   <div className="grid md:grid-cols-2 gap-12 items-center">
                       <div className="bg-neutral-900 p-8 border border-neutral-800 rounded-sm relative">
                         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-accent-500 to-purple-600"></div>
                         <h3 className="text-2xl font-bold text-white mb-4">Alex Souza</h3>
+                        <p className="text-neutral-400 leading-relaxed mb-6 font-medium text-lg">
+                          Especialista em geração de vídeos com IA.
+                        </p>
                         <p className="text-neutral-400 leading-relaxed mb-4">
-                          Especialista em criação de conteúdo e edição estratégica. Meu foco é transformar ideias brutas em material visual polido, lógico e rentável.
+                          Foco em:
                         </p>
-                        <p className="text-neutral-400 leading-relaxed">
-                          Não vendo fórmulas mágicas. Vendo técnica e clareza. Meu estilo é firme e objetivo, focado na qualidade da entrega.
-                        </p>
+                        <ul className="space-y-2 text-neutral-300">
+                          <li className="flex items-start gap-2"><CheckCircle2 className="w-5 h-5 text-accent-500 shrink-0 mt-0.5" /> Criação de Histórias (Infantis, Comunicados, Promoção)</li>
+                          <li className="flex items-start gap-2"><CheckCircle2 className="w-5 h-5 text-accent-500 shrink-0 mt-0.5" /> Consultoria para elaboração de conteúdo para suas redes Sociais</li>
+                          <li className="flex items-start gap-2"><CheckCircle2 className="w-5 h-5 text-accent-500 shrink-0 mt-0.5" /> Edição avançada com Inteligência Artificial</li>
+                        </ul>
                       </div>
                       <div className="grid gap-4">
                         {[
-                          { icon: CheckCircle2, title: "Objetividade", desc: "Direto ao ponto. Economizo seu tempo." },
-                          { icon: Clock, title: "Prazos", desc: "Cronograma é compromisso." },
-                          { icon: BarChart3, title: "Resultado", desc: "Vídeos estruturados para converter." }
+                          { icon: BrainCircuit, title: "Tecnologia de Ponta", desc: "Uso das IAs mais recentes." },
+                          { icon: Clock, title: "Agilidade", desc: "Produção rápida e eficiente." },
+                          { icon: BarChart3, title: "Estratégia", desc: "Conteúdo pensado para engajar." }
                         ].map((item, i) => (
-                          <div key={i} className="bg-neutral-900/50 p-4 border border-neutral-800 rounded-sm flex items-center gap-4">
+                          <div key={i} className="bg-neutral-900/50 p-4 border border-neutral-800 rounded-sm flex items-center gap-4 hover:border-accent-500/50 transition-colors">
                             <item.icon className="text-accent-500 w-6 h-6 shrink-0" />
                             <div>
                               <h3 className="text-white font-bold">{item.title}</h3>
                               <p className="text-neutral-500 text-sm">{item.desc}</p>
                             </div>
-                          </div>
-                        ))}
-                      </div>
-                   </div>
-
-                   {/* Prova Social no Sobre */}
-                   <div className="border-t border-neutral-800 pt-16">
-                      <h3 className="text-2xl font-bold text-white mb-8 text-center">O que dizem os clientes</h3>
-                      <div className="grid md:grid-cols-3 gap-6">
-                        {testimonials.map((t, idx) => (
-                          <div key={idx} className="bg-neutral-900 p-6 border border-neutral-800 rounded-sm">
-                            <p className="text-neutral-400 italic mb-4 text-sm">"{t.text}"</p>
-                            <p className="text-white font-bold text-xs">— {t.author}, <span className="text-accent-500">{t.role}</span></p>
                           </div>
                         ))}
                       </div>
@@ -367,20 +421,27 @@ export default function App() {
                  <div className="max-w-6xl mx-auto">
                     <FadeIn className="text-center mb-16">
                       <h2 className="text-4xl font-bold text-white mb-4">Meus Serviços</h2>
-                      <p className="text-neutral-400 max-w-2xl mx-auto">Soluções completas de audiovisual e texto para elevar o nível do seu negócio.</p>
+                      <p className="text-neutral-400 max-w-2xl mx-auto">
+                        Soluções de alto nível impulsionadas por Inteligência Artificial.
+                      </p>
                     </FadeIn>
 
                     <div className="grid md:grid-cols-3 gap-8 mb-20">
                       {services.map((service, idx) => (
                         <FadeIn key={idx} delay={idx * 0.1}>
-                          <div className="bg-neutral-900 p-8 h-full border border-neutral-800 hover:border-accent-500 transition-colors rounded-sm group">
-                            <service.icon className="w-12 h-12 text-accent-500 mb-6 group-hover:scale-110 transition-transform" />
+                          <div className="bg-neutral-900/60 backdrop-blur-sm p-8 h-full border border-neutral-800 hover:border-accent-500 hover:bg-neutral-900 transition-all duration-300 rounded-lg group relative overflow-hidden shadow-lg">
+                            {/* Glow Effect */}
+                            <div className="absolute -right-10 -top-10 w-32 h-32 bg-accent-500/10 rounded-full blur-3xl group-hover:bg-accent-500/20 transition-all"></div>
+                            
+                            <service.icon className="w-12 h-12 text-white bg-accent-600 p-2.5 rounded-lg mb-6 shadow-lg shadow-accent-500/20 group-hover:scale-105 transition-transform" />
+                            
                             <h3 className="text-xl font-bold text-white mb-1">{service.title}</h3>
                             <p className="text-xs font-bold text-accent-500 uppercase tracking-widest mb-6">{service.subtitle}</p>
+                            
                             <ul className="space-y-3 border-t border-neutral-800 pt-6">
                               {service.features.map((feat, fIdx) => (
                                 <li key={fIdx} className="text-neutral-400 text-sm flex items-center gap-3">
-                                  <span className="w-1.5 h-1.5 bg-neutral-600 group-hover:bg-accent-500 rounded-full transition-colors"></span>
+                                  <div className="w-1.5 h-1.5 bg-neutral-600 group-hover:bg-accent-400 rounded-full transition-colors shrink-0"></div>
                                   {feat}
                                 </li>
                               ))}
@@ -388,24 +449,6 @@ export default function App() {
                           </div>
                         </FadeIn>
                       ))}
-                    </div>
-
-                    <div className="bg-neutral-900 border border-neutral-800 p-10 rounded-sm">
-                       <h3 className="text-2xl font-bold text-white mb-8 text-center">Como funciona o processo</h3>
-                       <div className="grid md:grid-cols-4 gap-8">
-                          {[
-                            { title: "Briefing", desc: "Você me envia a ideia." },
-                            { title: "Estrutura", desc: "Crio o roteiro e lógica." },
-                            { title: "Produção", desc: "Edição, ajustes e IA." },
-                            { title: "Entrega", desc: "Arquivo pronto." }
-                          ].map((step, idx) => (
-                            <div key={idx} className="relative text-center">
-                              <div className="w-10 h-10 bg-neutral-800 rounded-full flex items-center justify-center text-white font-bold mx-auto mb-4 border border-neutral-700">{idx + 1}</div>
-                              <h4 className="text-white font-bold mb-2">{step.title}</h4>
-                              <p className="text-neutral-500 text-sm">{step.desc}</p>
-                            </div>
-                          ))}
-                       </div>
                     </div>
                  </div>
                </section>
@@ -450,23 +493,58 @@ export default function App() {
             </motion.div>
           )}
 
+          {/* --- PÁGINA PARCERIAS --- */}
+          {currentPage === 'parcerias' && (
+            <motion.div key="parcerias" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="min-h-screen">
+              <section className="py-20 px-4">
+                <div className="max-w-6xl mx-auto">
+                   <FadeIn className="text-center mb-16">
+                      <h2 className="text-4xl font-bold text-white mb-4">Nossas Parcerias</h2>
+                      <p className="text-neutral-400 max-w-2xl mx-auto">
+                        Conheça os profissionais e empresas de excelência com quem desenvolvo projetos e conteúdo.
+                      </p>
+                   </FadeIn>
+
+                   {partners.length > 0 ? (
+                     <div className="flex flex-wrap justify-center gap-8">
+                       {partners.map((partner, idx) => (
+                         <PartnerCard key={idx} partner={partner} idx={idx} />
+                       ))}
+                     </div>
+                   ) : (
+                     <div className="text-center text-neutral-500 p-10 border border-neutral-800 border-dashed rounded-sm">
+                       Nenhuma parceria cadastrada no momento.
+                     </div>
+                   )}
+                </div>
+              </section>
+            </motion.div>
+          )}
+
           {/* --- PÁGINA CONTATO --- */}
           {currentPage === 'contato' && (
              <motion.div key="contato" initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 50 }} className="min-h-screen flex flex-col justify-center">
                 <section className="py-20 px-4">
                    <div className="max-w-4xl mx-auto">
-                      <div className="text-center bg-gradient-to-b from-neutral-900 to-neutral-950 border border-neutral-800 p-10 md:p-20 rounded-sm relative overflow-hidden shadow-2xl">
+                      <div className="text-center bg-gradient-to-b from-neutral-900 to-neutral-950 border border-neutral-800 p-10 md:p-20 rounded-lg relative overflow-hidden shadow-2xl">
                           <div className="absolute top-0 right-0 w-64 h-64 bg-accent-600/10 rounded-full blur-[80px] -mr-16 -mt-16 pointer-events-none"></div>
                           
-                          <h2 className="text-3xl md:text-5xl font-bold text-white mb-6 leading-tight">
+                          {/* FOTO DE PERFIL CENTRALIZADA */}
+                          <div className="flex justify-center mb-8 relative z-10">
+                            <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-neutral-800 shadow-2xl ring-2 ring-accent-500/50">
+                              <img src={profileImage} alt="Alex Souza" className="w-full h-full object-cover" />
+                            </div>
+                          </div>
+
+                          <h2 className="text-3xl md:text-5xl font-bold text-white mb-6 leading-tight relative z-10">
                             Vamos tirar seu projeto do papel?
                           </h2>
-                          <p className="text-lg text-neutral-400 mb-10 max-w-2xl mx-auto leading-relaxed">
+                          <p className="text-lg text-neutral-400 mb-10 max-w-2xl mx-auto leading-relaxed relative z-10">
                             Entre em contato agora para um orçamento personalizado. Sem compromisso, direto e rápido.
                           </p>
                           
-                          <div className="flex flex-col sm:flex-row justify-center gap-4 mb-16">
-                            <Button href={socialLinks.whatsapp} className="py-5 px-8 text-lg w-full sm:w-auto">
+                          <div className="relative z-10 flex flex-col sm:flex-row justify-center gap-4 mb-16">
+                            <Button href={socialLinks.whatsapp} className="py-5 px-8 text-lg w-full sm:w-auto shadow-xl shadow-accent-600/20">
                               <span className="flex items-center justify-center gap-3">
                                 <MessageCircle className="w-6 h-6" />
                                 Chamar no WhatsApp
@@ -480,13 +558,12 @@ export default function App() {
                             </Button>
                           </div>
 
-                          {/* FAQ no Contato */}
                           <div className="text-left border-t border-neutral-800 pt-10">
                             <h3 className="text-xl font-bold text-white mb-6 text-center">Dúvidas Frequentes</h3>
                             <div className="space-y-4 max-w-2xl mx-auto">
                               {faqs.map((faq, idx) => (
-                                <div key={idx} className="border border-neutral-800 bg-neutral-900/50 rounded-sm overflow-hidden">
-                                  <button onClick={() => toggleFaq(idx)} className="w-full flex items-center justify-between p-4 text-left hover:bg-neutral-800">
+                                <div key={idx} className="border border-neutral-800 bg-neutral-900/50 rounded-sm overflow-hidden hover:border-neutral-700 transition-colors">
+                                  <button onClick={() => toggleFaq(idx)} className="w-full flex items-center justify-between p-4 text-left">
                                     <span className="font-bold text-neutral-300 text-sm">{faq.q}</span>
                                     {openFaq === idx ? <ChevronUp className="w-4 h-4 text-accent-500" /> : <ChevronDown className="w-4 h-4 text-neutral-500" />}
                                   </button>
@@ -504,7 +581,7 @@ export default function App() {
         </AnimatePresence>
       </main>
 
-      {/* FOOTER FIXO (SEMPRE VISÍVEL) */}
+      {/* FOOTER FIXO */}
       <footer className="bg-neutral-950 border-t border-neutral-900 py-8 text-center text-sm text-neutral-600">
          <p>&copy; {new Date().getFullYear()} Alex Souza. Todos os direitos reservados.</p>
       </footer>

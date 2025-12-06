@@ -1,0 +1,1 @@
+// This file is deprecated. The Button component has been moved to App.tsx to better integrate with Framer Motion animations.
