@@ -11,18 +11,18 @@ export const socialLinks = {
 // Cole links do YouTube aqui (Vídeos ou Shorts)
 export const youtubeVideos = [
   {
-    link: "https://www.youtube.com/watch?v=LXb3EKWsInQ", 
-    title: "Comercial 4K",
-    category: "Comercial"
+    link: "https://www.youtube.com/watch?v=e4QflEF3d7M", 
+    title: "PodCast Saúde Mental – Usando a IA para falar de Saúde",
+    category: "Saúde Mental"
   },
   {
-    link: "https://www.youtube.com/shorts/ScMzIvxBSi4", 
-    title: "Edição Dinâmica",
-    category: "Reels / TikTok"
+    link: "https://www.youtube.com/watch?v=Aggdsuj1oI4", 
+    title: "HISTORIA contada por IA - A Era dos Soldados da Borracha no Acre: A História que o Brasil Esqueceu!",
+    category: "A Era dos Soldados da Borracha"
   },
   {
-    link: "https://www.youtube.com/watch?v=hY7m5jjJ9mM", 
-    title: "Motion Graphics",
+    link: "https://www.youtube.com/watch?v=1gL_ddhlNuI&t=12s", 
+    title: "Acre: O Que NINGUÉM Te Conta!",
     category: "Animação"
   }
 ];
@@ -36,14 +36,5 @@ export const instagramPosts = [
     title: "Vídeo Bolsa Família",
     category: "Institucional"
   },
-  {
-    link: "https://www.instagram.com/alexsouzaac", 
-    title: "Destaque Recente 2",
-    category: "Reels"
-  },
-  {
-    link: "https://www.instagram.com/alexsouzaac", 
-    title: "Destaque Recente 3",
-    category: "Social Media"
-  }
+   
 ];
