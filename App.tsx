@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { 
   Video, Zap, CheckCircle2, Clock, BarChart3, Film, PenTool, 
   MessageSquare, ChevronDown, ChevronUp, BrainCircuit, 
-  LayoutTemplate, MessageCircle, Menu, X, Instagram, Youtube, PlayCircle, ArrowRight
+  LayoutTemplate, MessageCircle, Menu, X, Instagram, Youtube, PlayCircle, ArrowRight, ExternalLink
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { portfolioVideos, socialLinks } from './portfolio';
+import { youtubeVideos, instagramPosts, socialLinks } from './portfolio';
 
 // --- FUNÇÃO AUXILIAR PARA EXTRAIR ID DO YOUTUBE ---
 const getYoutubeId = (url: string) => {
@@ -53,22 +53,10 @@ const Button = ({ children, variant = 'primary', href, className = '', ...props 
   return <motion.button whileTap={{ scale: 0.95 }} className={combinedClasses} {...props}>{content}</motion.button>;
 };
 
-// Componente isolado de Vídeo - Agora funciona como Link com animação
-interface VideoCardProps {
-  video: {
-    link: string;
-    title: string;
-    category: string;
-  };
-  idx: number;
-}
-
-const VideoCard: React.FC<VideoCardProps> = ({ video, idx }) => {
+// Componente Card YouTube
+const YoutubeCard: React.FC<{ video: { link: string; title: string; category: string }; idx: number }> = ({ video, idx }) => {
   const videoId = getYoutubeId(video.link);
-
   if (!videoId) return null;
-
-  // URL da Thumbnail de Alta Qualidade
   const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
 
   return (
@@ -78,10 +66,8 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, idx }) => {
         target="_blank" 
         rel="noopener noreferrer"
         className="block bg-neutral-900 border border-neutral-800 rounded-sm overflow-hidden group relative"
-        whileHover={{ y: -5, borderColor: '#3b82f6' }}
-        transition={{ duration: 0.3 }}
+        whileHover={{ y: -5, borderColor: '#ef4444' }}
       >
-        {/* Área da Capa */}
         <div className="aspect-video w-full bg-black relative overflow-hidden">
           <motion.img 
             src={thumbnailUrl} 
@@ -92,21 +78,46 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, idx }) => {
           />
           <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/40 transition-colors">
             <motion.div 
-              className="w-16 h-16 bg-accent-600/90 rounded-full flex items-center justify-center shadow-2xl backdrop-blur-sm"
-              whileHover={{ scale: 1.2, backgroundColor: '#dc2626' }}
+              className="w-14 h-14 bg-red-600 rounded-full flex items-center justify-center shadow-2xl backdrop-blur-sm"
+              whileHover={{ scale: 1.2 }}
             >
-              <PlayCircle className="w-8 h-8 text-white fill-white ml-1" />
+              <PlayCircle className="w-6 h-6 text-white fill-white ml-1" />
             </motion.div>
           </div>
         </div>
-
-        {/* Descrição */}
-        <div className="p-5 flex items-center justify-between bg-neutral-900 z-10 relative">
+        <div className="p-4 flex items-center justify-between bg-neutral-900 relative z-10">
           <div>
-            <h3 className="font-bold text-white text-lg leading-tight group-hover:text-accent-500 transition-colors">{video.title}</h3>
-            <p className="text-neutral-500 text-xs uppercase tracking-widest font-bold mt-1 group-hover:text-neutral-400">{video.category}</p>
+            <h3 className="font-bold text-white text-base leading-tight group-hover:text-red-500 transition-colors line-clamp-1">{video.title}</h3>
+            <p className="text-neutral-500 text-[10px] uppercase tracking-widest font-bold mt-1">{video.category}</p>
           </div>
-          <Youtube className="w-6 h-6 text-neutral-600 group-hover:text-red-600 transition-colors" />
+          <Youtube className="w-5 h-5 text-neutral-600 group-hover:text-red-500 transition-colors" />
+        </div>
+      </motion.a>
+    </FadeIn>
+  );
+};
+
+// Componente Card Instagram
+const InstagramCard: React.FC<{ post: { link: string; title: string; category: string }; idx: number }> = ({ post, idx }) => {
+  return (
+    <FadeIn delay={idx * 0.1}>
+      <motion.a 
+        href={post.link} 
+        target="_blank" 
+        rel="noopener noreferrer"
+        className="block bg-neutral-900 border border-neutral-800 rounded-sm overflow-hidden group relative h-full flex flex-col"
+        whileHover={{ y: -5, borderColor: '#d62976' }}
+      >
+        <div className="aspect-square w-full bg-gradient-to-br from-purple-600 via-pink-600 to-orange-500 relative flex items-center justify-center overflow-hidden">
+          <div className="absolute inset-0 bg-black/20 group-hover:bg-black/0 transition-colors"></div>
+          <Instagram className="w-16 h-16 text-white drop-shadow-lg transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-300" />
+          <div className="absolute bottom-3 right-3 bg-white/20 backdrop-blur-md px-2 py-1 rounded text-xs font-bold text-white flex items-center gap-1">
+            <ExternalLink className="w-3 h-3" /> Abrir Post
+          </div>
+        </div>
+        <div className="p-4 bg-neutral-900 relative z-10 flex-1 flex flex-col justify-center">
+          <h3 className="font-bold text-white text-base leading-tight group-hover:text-pink-500 transition-colors">{post.title}</h3>
+          <p className="text-neutral-500 text-[10px] uppercase tracking-widest font-bold mt-1">{post.category}</p>
         </div>
       </motion.a>
     </FadeIn>
@@ -395,30 +406,64 @@ export default function App() {
           </div>
         </section>
 
-        {/* PORTFOLIO (YOUTUBE LINK EXTERNO) */}
+        {/* PORTFOLIO DIVIDIDO */}
         <section id="portfolio" className="py-24 px-4 bg-neutral-950">
           <div className="max-w-6xl mx-auto">
-            <FadeIn className="text-center mb-12">
+            <FadeIn className="text-center mb-16">
               <h2 className="text-3xl font-bold text-white">Portfólio</h2>
-              <p className="text-neutral-400 mt-2">Confira meus trabalhos recentes. Clique para assistir no YouTube.</p>
+              <p className="text-neutral-400 mt-2">Clique para ver os trabalhos completos.</p>
             </FadeIn>
             
-            <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-8">
-              {portfolioVideos.map((video, idx) => (
-                <VideoCard key={idx} video={video} idx={idx} />
-              ))}
+            {/* SEÇÃO YOUTUBE */}
+            <div className="mb-20">
+              <FadeIn className="flex items-center gap-4 mb-8">
+                <div className="w-10 h-10 bg-red-600 rounded flex items-center justify-center shadow-lg">
+                  <Youtube className="text-white w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-white">Destaques YouTube</h3>
+                  <p className="text-xs text-neutral-500 uppercase tracking-wider font-bold">@acreviralia</p>
+                </div>
+              </FadeIn>
+              
+              <div className="grid md:grid-cols-3 gap-6">
+                {youtubeVideos.map((video, idx) => (
+                  <YoutubeCard key={idx} video={video} idx={idx} />
+                ))}
+              </div>
+              
+              <div className="text-center mt-8">
+                <Button href={socialLinks.youtube} variant="outline" className="text-sm py-2">
+                  Ver Canal Completo
+                </Button>
+              </div>
             </div>
 
-            <FadeIn delay={0.4} className="mt-16 flex justify-center gap-4 flex-wrap">
-              <Button href={socialLinks.youtube} variant="outline" className="gap-2">
-                <PlayCircle className="w-5 h-5" />
-                Ver Canal Completo
-              </Button>
-              <Button href={socialLinks.instagram} variant="outline" className="gap-2">
-                <Instagram className="w-5 h-5" />
-                Ver Reels no Instagram
-              </Button>
-            </FadeIn>
+            {/* SEÇÃO INSTAGRAM */}
+            <div>
+              <FadeIn className="flex items-center gap-4 mb-8">
+                <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-orange-500 rounded flex items-center justify-center shadow-lg">
+                  <Instagram className="text-white w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-white">Destaques Instagram</h3>
+                  <p className="text-xs text-neutral-500 uppercase tracking-wider font-bold">@alexsouzaac</p>
+                </div>
+              </FadeIn>
+
+              <div className="grid md:grid-cols-3 gap-6">
+                {instagramPosts.map((post, idx) => (
+                  <InstagramCard key={idx} post={post} idx={idx} />
+                ))}
+              </div>
+              
+               <div className="text-center mt-8">
+                <Button href={socialLinks.instagram} variant="outline" className="text-sm py-2">
+                  Ver Perfil Completo
+                </Button>
+              </div>
+            </div>
+
           </div>
         </section>
 
