@@ -1,25 +1,34 @@
-// --- SEU PAINEL DE VÍDEOS ---
-// Cole o link completo do YouTube (pode ser link curto youtu.be ou longo youtube.com) e coloque um título.
+// --- SEU PAINEL DE CONTROLE ---
 
+// 1. LINKS DAS SUAS REDES SOCIAIS
+// Mude aqui e o site atualiza todos os botões (WhatsApp, Instagram, etc)
+export const socialLinks = {
+  whatsapp: "https://wa.me/5568999736712", // Seu link de WhatsApp
+  instagram: "https://instagram.com/alexsouzaac", // Seu link do Instagram
+  youtube: "https://youtube.com/@acreviralia" // Seu link do Canal
+};
+
+// 2. SEUS VÍDEOS DO PORTFÓLIO
+// Cole o link completo (pode ser vídeo normal ou Shorts) e coloque um título.
 export const portfolioVideos = [
   {
-    link: "https://www.youtube.com/watch?v=Aggdsuj1oI4", 
-    title: "Vídeo nformativo",
-    category: "Informativo"
+    link: "https://www.instagram.com/p/DRyZ0kwDPSb/", // Exemplo vídeo longo
+    title: "Video Bolsa Familia",
+    category: "Institucional"
   },
   {
-    link: "https://youtube.com/shorts/ElcvAEUOils?si=YDbg7iq02j5JuQNg", 
-    title: "Humor com IA",
-    category: "Humor"
+    link: "https://www.youtube.com/shorts/ScMzIvxBSi4", // Exemplo SHORTS (link diferente)
+    title: "Edição Dinâmica (Shorts)",
+    category: "Reels / TikTok"
+  },
+  {
+    link: "https://www.youtube.com/watch?v=LXb3EKWsInQ", 
+    title: "Comercial 4K",
+    category: "Comercial"
   },
   {
     link: "https://www.youtube.com/watch?v=hY7m5jjJ9mM", 
-    title: "Animação de Logo",
-    category: "Motion Graphics"
-  },
-  {
-    link: "https://www.youtube.com/watch?v=ScMzIvxBSi4", 
-    title: "Estilo Reels / TikTok",
-    category: "Conteúdo Curto"
+    title: "Motion Graphics",
+    category: "Animação"
   }
 ];
