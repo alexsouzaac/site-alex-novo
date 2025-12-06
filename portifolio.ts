@@ -4,13 +4,13 @@
 export const portfolioVideos = [
   {
     link: "https://www.youtube.com/watch?v=Aggdsuj1oI4", 
-    title: "Vídeo Institucional Exemplo",
-    category: "Institucional"
+    title: "Vídeo nformativo",
+    category: "Informativo"
   },
   {
-    link: "https://www.youtube.com/watch?v=LXb3EKWsInQ", 
-    title: "Comercial Dinâmico",
-    category: "Comercial"
+    link: "https://youtube.com/shorts/ElcvAEUOils?si=YDbg7iq02j5JuQNg", 
+    title: "Humor com IA",
+    category: "Humor"
   },
   {
     link: "https://www.youtube.com/watch?v=hY7m5jjJ9mM", 
