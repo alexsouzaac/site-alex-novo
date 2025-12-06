@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { 
   Video, Zap, CheckCircle2, Clock, BarChart3, Film, PenTool, 
   MessageSquare, ChevronDown, ChevronUp, BrainCircuit, 
-  LayoutTemplate, MessageCircle, Menu, X, Instagram, Youtube, PlayCircle, ExternalLink, Home, Handshake, CalendarCheck, Sparkles, Cpu
+  LayoutTemplate, MessageCircle, Menu, X, Instagram, Youtube, PlayCircle, ExternalLink, Home, Handshake, CalendarCheck, Sparkles, Cpu, MapPin
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { youtubeVideos, instagramPosts, socialLinks, partners, profileImage } from './portfolio';
@@ -166,27 +166,66 @@ const InstagramCard: React.FC<{ post: { link: string; title: string; category: s
 const PartnerCard: React.FC<{ partner: any; idx: number }> = ({ partner, idx }) => {
   return (
     <FadeIn delay={idx * 0.1} className="w-full md:max-w-md flex-grow">
-      <div className="bg-neutral-900 border border-neutral-800 rounded-sm p-6 md:p-8 flex flex-col items-center text-center hover:border-accent-500 transition-all group hover:-translate-y-1 h-full shadow-lg">
-        <div className="w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden mb-6 border-2 border-accent-500/30 group-hover:border-accent-500 transition-colors shadow-lg shrink-0">
-          <img src={partner.image} alt={partner.name} className="w-full h-full object-cover" />
-        </div>
-        <h3 className="text-lg md:text-xl font-bold text-white mb-2">{partner.name}</h3>
-        <p className="text-accent-500 text-[10px] md:text-xs font-bold uppercase tracking-widest mb-4">{partner.role}</p>
-        <p className="text-neutral-400 text-sm leading-relaxed mb-6 flex-grow whitespace-pre-line">{partner.description}</p>
+      <div className="bg-neutral-900 border border-neutral-800 rounded-lg p-6 flex flex-col hover:border-accent-500 transition-all group hover:-translate-y-1 h-full shadow-lg relative overflow-hidden">
         
+        {/* HEADER: Foto + Nome (Lado a Lado) */}
+        <div className="flex items-center gap-4 mb-6 border-b border-neutral-800 pb-6">
+          {/* Foto Menor */}
+          <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-neutral-700 group-hover:border-accent-500 transition-colors shadow-lg shrink-0">
+            <img src={partner.image} alt={partner.name} className="w-full h-full object-cover" />
+          </div>
+          
+          {/* Texto Alinhado à Esquerda */}
+          <div className="text-left">
+            <h3 className="text-base font-bold text-white leading-tight">{partner.name}</h3>
+            <p className="text-accent-500 text-[10px] font-bold uppercase tracking-wider mt-1">{partner.role}</p>
+          </div>
+        </div>
+        
+        {/* Descrição */}
+        <p className="text-neutral-400 text-sm leading-relaxed mb-8 flex-grow whitespace-pre-line text-left">
+          {partner.description}
+        </p>
+        
+        {/* Ações */}
         <div className="flex flex-col gap-3 w-full mt-auto">
-          <Button href={partner.link} variant="outline" className="w-full text-xs py-3 px-4 hover:bg-accent-600 hover:border-accent-600 hover:text-white">
+          {/* Botão Principal */}
+          <Button href={partner.link} className="w-full text-xs py-3 px-4 shadow-xl">
              <CalendarCheck className="w-4 h-4 mr-2" />
              {partner.buttonText || "Agendar Serviço"}
           </Button>
 
-          {partner.instagram && (
-            <Button href={partner.instagram} variant="secondary" className="w-full text-xs py-3 px-4">
-              <Instagram className="w-4 h-4 mr-2" />
-              Conheça o Profissional
-            </Button>
-          )}
+          {/* Novos Botões: Instagram e Mapa (Lado a Lado) */}
+          <div className="flex gap-3 mt-1">
+            
+            {/* Botão Instagram */}
+            {partner.instagram && (
+              <a 
+                href={partner.instagram} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded bg-neutral-950 border border-neutral-800 text-neutral-400 text-xs font-bold hover:border-pink-600 hover:text-white hover:bg-pink-600/10 transition-all duration-300 group/insta"
+              >
+                <Instagram className="w-4 h-4 text-pink-500 group-hover/insta:text-white transition-colors" />
+                Instagram
+              </a>
+            )}
+
+            {/* Botão Mapa */}
+            {partner.mapLink && (
+              <a 
+                href={partner.mapLink} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded bg-neutral-950 border border-neutral-800 text-neutral-400 text-xs font-bold hover:border-green-600 hover:text-white hover:bg-green-600/10 transition-all duration-300 group/map"
+              >
+                <MapPin className="w-4 h-4 text-green-500 group-hover/map:text-white transition-colors" />
+                Como Chegar
+              </a>
+            )}
+          </div>
         </div>
+
       </div>
     </FadeIn>
   );

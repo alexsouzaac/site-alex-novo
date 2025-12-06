@@ -10,7 +10,6 @@ export const socialLinks = {
 };
 
 // FOTO DE PERFIL (Contato)
-// Link convertido para RAW para funcionar como imagem
 export const profileImage = "https://raw.githubusercontent.com/alexsouzaac/site-alex-novo/main/foto-perfil/572782279_18537239245052533_242650883687521049_n.jpg";
 
 // 2. PARCEIROS
@@ -19,21 +18,22 @@ export const partners = [
     name: "Dr. Marcelus Negreiros",
     role: "Psiquiatria & Medicina de Família",
     description: "Referência em Saúde Mental e cuidado integral. Doutor em Ciências e Mestre em Medicina, une rigor científico com atendimento humanizado. Especialista no tratamento de ansiedade, depressão e transtornos mentais. \n\nCRM/AC 749 | RQE 201, 1990, 1256.",
-    // Link convertido para RAW
     image: "https://raw.githubusercontent.com/alexsouzaac/site-alex-novo/main/foto-perfil/marcelus.jpg", 
-    link: "https://wa.me/5568999736712?text=Ol%C3%A1%20vim%20pela%20indica%C3%A7%C3%A3o%20do%20Alex%20Souza%2C%20e%20gostaria%20de%20saber%20o%20valor%20da%20consulta%21",
+    // Link atualizado abaixo com a nova frase (consulta)
+    link: "https://wa.me/5568999736712?text=Ol%C3%A1%2C%20vim%20pela%20indica%C3%A7%C3%A3o%20do%20Alex%20Souza%2C%20e%20estou%20interessado%20em%20consulta%20m%C3%A9dica%20psiqui%C3%A1trica.",
     buttonText: "Agendar Consulta",
-    instagram: "https://instagram.com/drmarcelusnegreiros"
+    instagram: "https://instagram.com/drmarcelusnegreiros",
+    mapLink: "https://maps.google.com/?q=Rua+Jasmim%2C+04.+Jardim+Tropical.+Rio+Branco%2C+Acre"
   },
   {
     name: "Café com Psico | Anne Brito",
     role: "Psicóloga & Neuropsicóloga",
-    description: "Especialista em Neurodiversidade e Análise do Comportamento. Foco em Psicólogos Autistas e Neuropsicologia. Um espaço acolhedor para transformar vidas através da saúde mental.\n\nCRP 24/0293\nR. Sena Madureira, n.306, Floresta, Rio Branco, Acre.",
-    // Link convertido para RAW
+    description: "Especialista em Neurodiversidade e Análise do Comportamento. Foco em Psicólogos Autistas e Neuropsicologia. Um espaço acolhedor para transformar vidas através da saúde mental.\n\nCRP 24/0293\n",
     image: "https://raw.githubusercontent.com/alexsouzaac/site-alex-novo/main/foto-perfil/cafepsico.jpg",
-    link: "https://wa.me/5568999736712?text=Ol%C3%A1%20vim%20pela%20indica%C3%A7%C3%A3o%20do%20Alex%20Souza%2C%20e%20gostaria%20de%20saber%20o%20valor%20da%20consulta%21",
+    link: "https://wa.me/5568999052475?text=Ol%C3%A1%2C%20vim%20pela%20indica%C3%A7%C3%A3o%20do%20Alex%20Souza%2C%20e%20estou%20interessado%20em%20avalia%C3%A7%C3%A3o%20neuropsicol%C3%B3gica.",
     buttonText: "Agendar Consulta",
-    instagram: "https://instagram.com/cafecompsico"
+    instagram: "https://instagram.com/cafecompsico",
+    mapLink: "https://maps.app.goo.gl/JPH48ap9F3y8jF7r8"
   }
 ];
 
