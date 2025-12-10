@@ -50,9 +50,14 @@ export const youtubeVideos = [
     category: "Documentário IA"
   },
   {
-    link: "https://www.youtube.com/watch?v=1gL_ddhlNuI", 
-    title: "Acre: O Que NINGUÉM Te Conta!",
-    category: "Curiosidades"
+    link: "https://www.youtube.com/shorts/RvHcth5fTZM", 
+    title: "Se Você Faz ISSO… Já Era Sua Autoestima",
+    category: "Anne Brito"
+  },
+  {
+    link: "https://www.youtube.com/watch?v=TprwRbtUULs", 
+    title: "Atenção! Beneficiários do Bolsa Família Devem Fazer Acompanhamento na UBS Até 30/12",
+    category: "BOLSA FAMILIA"
   }
 ];
 
